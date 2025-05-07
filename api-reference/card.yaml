@@ -16,6 +16,7 @@ paths:
               $ref: '#/components/schemas/HttpCardOnboardingRequest'
             examples:
               DE:
+                summary: DE
                 value:
                   cardType: CREDIT
                   applicant:
@@ -45,6 +46,7 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               DE_KYC_DENIAL_TEST:
+                summary: DE_KYC_DENIAL_TEST
                 value:
                   cardType: CREDIT
                   applicant:
@@ -74,6 +76,7 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               DE_ADDRESS_MISMATCH_TEST:
+                summary: DE_ADDRESS_MISMATCH_TEST
                 value:
                   cardType: CREDIT
                   applicant:
@@ -103,6 +106,7 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               DE_NAME_MISMATCH_TEST:
+                summary: DE_NAME_MISMATCH_TEST
                 value:
                   cardType: CREDIT
                   applicant:
@@ -132,6 +136,7 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               DE_CREDIT_FAIL_TEST:
+                summary: DE_CREDIT_FAIL_TEST
                 value:
                   cardType: CREDIT
                   applicant:
@@ -161,6 +166,7 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               DE_INTERNAL_ERROR_TEST:
+                summary: DE_INTERNAL_ERROR_TEST
                 value:
                   cardType: CREDIT
                   applicant:
@@ -190,6 +196,7 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               SE:
+                summary: SE
                 value:
                   cardType: CREDIT
                   applicant:
