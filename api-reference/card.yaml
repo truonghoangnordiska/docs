@@ -1,0 +1,814 @@
+openapi: 3.1.0
+info:
+  title: Card
+  version: '1.0'
+paths:
+  /api/engagements/card/onboarding:
+    post:
+      tags:
+      - Card
+      description: Initiate card onboarding process
+      operationId: InitiateCardOnboarding
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HttpCardOnboardingRequest'
+            examples:
+              DE:
+                value:
+                  cardType: CREDIT
+                  applicant:
+                    type: INDIVIDUAL
+                    nationality: DE
+                    salutation: HERR
+                    firstName: Hans
+                    lastName: Müller
+                    phone: '+491701234567'
+                    email: hans.mueller@example.com
+                    dateOfBirth: '1985-07-15'
+                    placeOfBirth: Berlin
+                    address:
+                      streetLine1: Hauptstraße 10
+                      city: Berlin
+                      postalCode: '10115'
+                      country: DE
+                    employmentType: PERMANENT
+                    civilStatus: MARRIED
+                    monthlyIncome:
+                      currency: EUR
+                      amount: 3500
+                      unit: MINOR
+                    housing: OWNER
+                    locale: de
+                  redirectUrls:
+                    successUrl: https://example.com/success
+                    failUrl: https://example.com/fail
+              DE_KYC_DENIAL_TEST:
+                value:
+                  cardType: CREDIT
+                  applicant:
+                    type: INDIVIDUAL
+                    nationality: DE
+                    salutation: HERR
+                    firstName: Kyc
+                    lastName: Denial
+                    phone: '+491701234567'
+                    email: hans.mueller@example.com
+                    dateOfBirth: '1985-01-01'
+                    placeOfBirth: Berlin
+                    address:
+                      streetLine1: Hauptstraße 10
+                      city: Berlin
+                      postalCode: '10115'
+                      country: DE
+                    employmentType: PERMANENT
+                    civilStatus: MARRIED
+                    monthlyIncome:
+                      currency: EUR
+                      amount: 3500
+                      unit: MINOR
+                    housing: OWNER
+                    locale: de
+                  redirectUrls:
+                    successUrl: https://example.com/success
+                    failUrl: https://example.com/fail
+              DE_ADDRESS_MISMATCH_TEST:
+                value:
+                  cardType: CREDIT
+                  applicant:
+                    type: INDIVIDUAL
+                    nationality: DE
+                    salutation: HERR
+                    firstName: Address
+                    lastName: Mismatch
+                    phone: '+491701234567'
+                    email: hans.mueller@example.com
+                    dateOfBirth: '1985-07-15'
+                    placeOfBirth: Berlin
+                    address:
+                      streetLine1: Falsche Straße 123
+                      city: Berlin
+                      postalCode: '10115'
+                      country: DE
+                    employmentType: PERMANENT
+                    civilStatus: MARRIED
+                    monthlyIncome:
+                      currency: EUR
+                      amount: 3500
+                      unit: MINOR
+                    housing: OWNER
+                    locale: de
+                  redirectUrls:
+                    successUrl: https://example.com/success
+                    failUrl: https://example.com/fail
+              DE_NAME_MISMATCH_TEST:
+                value:
+                  cardType: CREDIT
+                  applicant:
+                    type: INDIVIDUAL
+                    nationality: DE
+                    salutation: HERR
+                    firstName: Name
+                    lastName: Mismatch
+                    phone: '+491701234567'
+                    email: hans.mueller@example.com
+                    dateOfBirth: '1985-07-15'
+                    placeOfBirth: Berlin
+                    address:
+                      streetLine1: Hauptstraße 10
+                      city: Berlin
+                      postalCode: '10115'
+                      country: DE
+                    employmentType: PERMANENT
+                    civilStatus: MARRIED
+                    monthlyIncome:
+                      currency: EUR
+                      amount: 3500
+                      unit: MINOR
+                    housing: OWNER
+                    locale: de
+                  redirectUrls:
+                    successUrl: https://example.com/success
+                    failUrl: https://example.com/fail
+              DE_CREDIT_FAIL_TEST:
+                value:
+                  cardType: CREDIT
+                  applicant:
+                    type: INDIVIDUAL
+                    nationality: DE
+                    salutation: HERR
+                    firstName: Credit
+                    lastName: Fail
+                    phone: '+491701234567'
+                    email: hans.mueller@example.com
+                    dateOfBirth: '1985-07-15'
+                    placeOfBirth: Berlin
+                    address:
+                      streetLine1: Hauptstraße 10
+                      city: Berlin
+                      postalCode: '10115'
+                      country: DE
+                    employmentType: PERMANENT
+                    civilStatus: MARRIED
+                    monthlyIncome:
+                      currency: EUR
+                      amount: 3500
+                      unit: MINOR
+                    housing: OWNER
+                    locale: de
+                  redirectUrls:
+                    successUrl: https://example.com/success
+                    failUrl: https://example.com/fail
+              DE_INTERNAL_ERROR_TEST:
+                value:
+                  cardType: CREDIT
+                  applicant:
+                    type: INDIVIDUAL
+                    nationality: DE
+                    salutation: HERR
+                    firstName: Internal
+                    lastName: Error
+                    phone: '+491701234567'
+                    email: hans.mueller@example.com
+                    dateOfBirth: '1985-07-15'
+                    placeOfBirth: Berlin
+                    address:
+                      streetLine1: Hauptstraße 10
+                      city: Berlin
+                      postalCode: '10115'
+                      country: DE
+                    employmentType: PERMANENT
+                    civilStatus: MARRIED
+                    monthlyIncome:
+                      currency: EUR
+                      amount: 3500
+                      unit: MINOR
+                    housing: OWNER
+                    locale: de
+                  redirectUrls:
+                    successUrl: https://example.com/success
+                    failUrl: https://example.com/fail
+              SE:
+                value:
+                  cardType: CREDIT
+                  applicant:
+                    type: INDIVIDUAL
+                    nationality: SE
+                    phone: '+46701234567'
+                    email: sven.svensson@example.com
+                    nationalIdNumber: '199403021234'
+                    employmentType: PERMANENT
+                    civilStatus: SINGLE
+                    monthlyIncome:
+                      currency: SEK
+                      amount: 45000
+                      unit: MINOR
+                    housing: RENTING
+                  redirectUrls:
+                    successUrl: https://example.com/success
+                    failUrl: https://example.com/fail
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpInitiateCardOnboardingResponse'
+        '400':
+          description: 'Invalid value for: body'
+          content:
+            text/plain:
+              schema:
+                type: string
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBodyResponse'
+      security:
+      - httpAuth: []
+  /api/engagements/card/onboarding/{onboarding-id}:
+    get:
+      tags:
+      - Card
+      description: Get card onboarding status
+      operationId: GetCardOnboardingStatus
+      parameters:
+      - name: onboarding-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpCardOnboardingResponse'
+              examples:
+                DE_AWAITING_SIGNING:
+                  value:
+                    id: 79b1629c-4831-4f20-a795-973760e51fd5
+                    status: AWAITING_SIGNING
+                    additionalInformation:
+                      signingUrl: https://example.com/sign
+                    cardType: CREDIT
+                    applicant:
+                      type: INDIVIDUAL
+                      nationality: DE
+                      salutation: HERR
+                      firstName: Hans
+                      lastName: Müller
+                      phone: '+491701234567'
+                      email: hans.mueller@example.com
+                      dateOfBirth: '1985-07-15'
+                      placeOfBirth: Berlin
+                      address:
+                        streetLine1: Hauptstraße 10
+                        city: Berlin
+                        postalCode: '10115'
+                        country: DE
+                      employmentType: PERMANENT
+                      civilStatus: MARRIED
+                      monthlyIncome:
+                        currency: EUR
+                        amount: 3500
+                        unit: MINOR
+                      housing: OWNER
+                      locale: de
+                    createdAt: '2025-05-07T11:19:44.584162Z'
+                    updatedAt: '2025-05-07T12:19:44.584168Z'
+                DE_AWAITING_CARD_CREATION:
+                  value:
+                    id: fdcc9e63-19e4-4bb2-a57a-81481d13a8ab
+                    status: AWAITING_CARD_CREATION
+                    additionalInformation:
+                      creditAssessment:
+                        approvedLimit:
+                          currency: EUR
+                          amount: 5000
+                          unit: MINOR
+                        approvedAt: '2025-05-07T11:49:44.586962Z'
+                        validUntil: '2025-06-06T12:19:44.586964Z'
+                    cardType: CREDIT
+                    applicant:
+                      type: INDIVIDUAL
+                      nationality: DE
+                      salutation: HERR
+                      firstName: Hans
+                      lastName: Müller
+                      phone: '+491701234567'
+                      email: hans.mueller@example.com
+                      dateOfBirth: '1985-07-15'
+                      placeOfBirth: Berlin
+                      address:
+                        streetLine1: Hauptstraße 10
+                        city: Berlin
+                        postalCode: '10115'
+                        country: DE
+                      employmentType: PERMANENT
+                      civilStatus: MARRIED
+                      monthlyIncome:
+                        currency: EUR
+                        amount: 3500
+                        unit: MINOR
+                      housing: OWNER
+                      locale: de
+                    createdAt: '2025-05-07T11:19:44.588116Z'
+                    updatedAt: '2025-05-07T12:19:44.588117Z'
+                DE_COMPLETED:
+                  value:
+                    id: 6894d09f-4685-443b-a6e9-3742112d2af2
+                    status: COMPLETED
+                    additionalInformation:
+                      creditAssessment:
+                        approvedLimit:
+                          currency: EUR
+                          amount: 5000
+                          unit: MINOR
+                        approvedAt: '2025-05-07T11:49:44.588640Z'
+                        validUntil: '2025-06-06T12:19:44.588641Z'
+                    cardType: CREDIT
+                    applicant:
+                      type: INDIVIDUAL
+                      nationality: DE
+                      salutation: HERR
+                      firstName: Hans
+                      lastName: Müller
+                      phone: '+491701234567'
+                      email: hans.mueller@example.com
+                      dateOfBirth: '1985-07-15'
+                      placeOfBirth: Berlin
+                      address:
+                        streetLine1: Hauptstraße 10
+                        city: Berlin
+                        postalCode: '10115'
+                        country: DE
+                      employmentType: PERMANENT
+                      civilStatus: MARRIED
+                      monthlyIncome:
+                        currency: EUR
+                        amount: 3500
+                        unit: MINOR
+                      housing: OWNER
+                      locale: de
+                    customerId: b02bc63f-fa85-4598-9ef3-2bbfafd86c82
+                    createdAt: '2025-05-07T11:19:44.588652Z'
+                    updatedAt: '2025-05-07T12:19:44.588653Z'
+                SE:
+                  value:
+                    id: 0c50a89a-1ca7-42e6-93d2-50fda9f54e66
+                    status: PROCESSING
+                    cardType: CREDIT
+                    applicant:
+                      type: INDIVIDUAL
+                      nationality: SE
+                      phone: '+46701234567'
+                      email: sven.svensson@example.com
+                      nationalIdNumber: '199403021234'
+                      employmentType: PERMANENT
+                      civilStatus: SINGLE
+                      monthlyIncome:
+                        currency: SEK
+                        amount: 45000
+                        unit: MINOR
+                      housing: RENTING
+                    createdAt: '2025-05-07T11:49:44.589142Z'
+                    updatedAt: '2025-05-07T12:19:44.589143Z'
+        '400':
+          description: 'Invalid value for: path parameter onboarding-id'
+          content:
+            text/plain:
+              schema:
+                type: string
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBodyResponse'
+      security:
+      - httpAuth: []
+components:
+  schemas:
+    CreditInformation:
+      title: CreditInformation
+      type: object
+      required:
+      - creditAssessment
+      properties:
+        creditAssessment:
+          $ref: '#/components/schemas/HttpCreditAssessment'
+    FailureInformation:
+      title: FailureInformation
+      type: object
+      required:
+      - failureCode
+      properties:
+        failureCode:
+          $ref: '#/components/schemas/HttpFailureCode'
+    GermanApplicant:
+      title: GermanApplicant
+      type: object
+      required:
+      - type
+      - nationality
+      - salutation
+      - firstName
+      - lastName
+      - phone
+      - email
+      - dateOfBirth
+      - placeOfBirth
+      - address
+      - employmentType
+      - civilStatus
+      - monthlyIncome
+      - housing
+      - locale
+      properties:
+        type:
+          $ref: '#/components/schemas/HttpApplicantType'
+        nationality:
+          description: ISO 3166-1 alpha-2 country code
+          type: string
+        salutation:
+          $ref: '#/components/schemas/HttpSalutation'
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          description: E.164 format.
+          type: string
+        email:
+          type: string
+        dateOfBirth:
+          description: ISO 8601 (YYYY-MM-DD)
+          type: string
+        placeOfBirth:
+          type: string
+        address:
+          $ref: '#/components/schemas/HttpAddress'
+        employmentType:
+          $ref: '#/components/schemas/HttpEmploymentType'
+        civilStatus:
+          $ref: '#/components/schemas/HttpCivilStatus'
+        monthlyIncome:
+          description: Money object represented in the smallest currency unit
+          type: object
+          required:
+          - amount
+          - currency
+          - unit
+          properties:
+            amount:
+              type: integer
+              format: int64
+            currency:
+              type: string
+            unit:
+              type: string
+        housing:
+          $ref: '#/components/schemas/HttpHousing'
+        externalCustomerId:
+          type: string
+        locale:
+          $ref: '#/components/schemas/HttpLocale'
+    HttpAdditionalInformation:
+      title: HttpAdditionalInformation
+      oneOf:
+      - $ref: '#/components/schemas/CreditInformation'
+      - $ref: '#/components/schemas/FailureInformation'
+      - $ref: '#/components/schemas/RejectInformation'
+      - $ref: '#/components/schemas/SigningInformation'
+    HttpAddress:
+      title: HttpAddress
+      type: object
+      required:
+      - streetLine1
+      - city
+      - postalCode
+      - country
+      properties:
+        streetLine1:
+          type: string
+        streetLine2:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+    HttpApplicant:
+      title: HttpApplicant
+      oneOf:
+      - $ref: '#/components/schemas/GermanApplicant'
+      - $ref: '#/components/schemas/SwedishApplicant'
+    HttpApplicantType:
+      title: HttpApplicantType
+      type: string
+      enum:
+      - INDIVIDUAL
+      - COMPANY
+    HttpCardOnboardingRequest:
+      title: HttpCardOnboardingRequest
+      oneOf:
+      - $ref: '#/components/schemas/HttpGermanCardOnboardingRequest'
+      - $ref: '#/components/schemas/HttpSwedishCardOnboardingRequest'
+    HttpCardOnboardingResponse:
+      title: HttpCardOnboardingResponse
+      type: object
+      required:
+      - id
+      - status
+      - cardType
+      - applicant
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/HttpOnboardingStatus'
+        additionalInformation:
+          $ref: '#/components/schemas/HttpAdditionalInformation'
+        cardType:
+          $ref: '#/components/schemas/HttpCardType'
+        applicant:
+          $ref: '#/components/schemas/HttpApplicant'
+        customerId:
+          type: string
+          format: uuid
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    HttpCardType:
+      title: HttpCardType
+      type: string
+      enum:
+      - CREDIT
+      - DEBIT
+      - PREPAID
+    HttpCivilStatus:
+      title: HttpCivilStatus
+      type: string
+      enum:
+      - SINGLE
+      - MARRIED
+      - COHABITANT
+      - DIVORCED
+      - WIDOWED
+    HttpCreditAssessment:
+      title: HttpCreditAssessment
+      type: object
+      required:
+      - approvedLimit
+      - approvedAt
+      - validUntil
+      properties:
+        approvedLimit:
+          description: Money object represented in the smallest currency unit
+          type: object
+          required:
+          - amount
+          - currency
+          - unit
+          properties:
+            amount:
+              type: integer
+              format: int64
+            currency:
+              type: string
+            unit:
+              type: string
+        approvedAt:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+    HttpEmploymentType:
+      title: HttpEmploymentType
+      type: string
+      enum:
+      - PERMANENT
+      - SOLE_PROPRIETOR
+      - RETIRED
+      - STUDENT
+      - HOMEMAKER
+      - OTHER
+    HttpErrorBodyResponse:
+      title: HttpErrorBodyResponse
+      type: object
+      required:
+      - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    HttpFailureCode:
+      title: HttpFailureCode
+      type: string
+      enum:
+      - INTERNAL_ERROR
+      - ADDRESS_MISMATCH
+      - NAME_MISMATCH
+      - ID_VERIFICATION_FAILED
+      - TIMEOUT
+    HttpGermanCardOnboardingRequest:
+      title: HttpGermanCardOnboardingRequest
+      type: object
+      required:
+      - cardType
+      - applicant
+      properties:
+        cardType:
+          $ref: '#/components/schemas/HttpCardType'
+        applicant:
+          $ref: '#/components/schemas/GermanApplicant'
+        redirectUrls:
+          $ref: '#/components/schemas/HttpRedirectUrls'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    HttpHousing:
+      title: HttpHousing
+      type: string
+      enum:
+      - RENTING
+      - OWNER
+      - OTHER
+    HttpInitiateCardOnboardingResponse:
+      title: HttpInitiateCardOnboardingResponse
+      type: object
+      required:
+      - id
+      - status
+      - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/HttpOnboardingStatus'
+        additionalInformation:
+          $ref: '#/components/schemas/HttpAdditionalInformation'
+        createdAt:
+          type: string
+          format: date-time
+    HttpLocale:
+      title: HttpLocale
+      description: ISO 639-1 language code (de, en)
+      type: string
+      enum:
+      - de
+      - en
+    HttpOnboardingStatus:
+      title: HttpOnboardingStatus
+      type: string
+      enum:
+      - PROCESSING
+      - AWAITING_SIGNING
+      - AWAITING_CARD_CREATION
+      - COMPLETED
+      - REJECTED
+      - FAILED
+    HttpRedirectUrls:
+      title: HttpRedirectUrls
+      type: object
+      required:
+      - successUrl
+      - failUrl
+      properties:
+        successUrl:
+          examples:
+          - https://example.com
+          type: string
+        failUrl:
+          examples:
+          - https://example.com
+          type: string
+    HttpRejectReason:
+      title: HttpRejectReason
+      type: string
+      enum:
+      - KYC_DENIAL
+      - CREDIT_SCORING_DENIAL
+    HttpSalutation:
+      title: HttpSalutation
+      type: string
+      enum:
+      - HERR
+      - FRAU
+      - MR
+      - MRS
+      - MS
+      - MISS
+    HttpSwedishCardOnboardingRequest:
+      title: HttpSwedishCardOnboardingRequest
+      type: object
+      required:
+      - cardType
+      - applicant
+      properties:
+        cardType:
+          $ref: '#/components/schemas/HttpCardType'
+        applicant:
+          $ref: '#/components/schemas/SwedishApplicant'
+        redirectUrls:
+          $ref: '#/components/schemas/HttpRedirectUrls'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+    Metadata:
+      title: Metadata
+      description: 'Key-value map. You can use metadata to store additional, structured
+        information on an object. Max key length: 48 chars. Max value length: 256
+        chars.'
+      type: object
+      additionalProperties:
+        description: Metadata value
+        type: string
+    RejectInformation:
+      title: RejectInformation
+      type: object
+      required:
+      - rejectReason
+      properties:
+        rejectReason:
+          $ref: '#/components/schemas/HttpRejectReason'
+    SigningInformation:
+      title: SigningInformation
+      type: object
+      required:
+      - signingUrl
+      properties:
+        signingUrl:
+          examples:
+          - https://example.com
+          type: string
+    SwedishApplicant:
+      title: SwedishApplicant
+      type: object
+      required:
+      - type
+      - nationality
+      - phone
+      - email
+      - nationalIdNumber
+      - employmentType
+      - civilStatus
+      - monthlyIncome
+      - housing
+      properties:
+        type:
+          $ref: '#/components/schemas/HttpApplicantType'
+        nationality:
+          description: ISO 3166-1 alpha-2 country code
+          type: string
+        phone:
+          description: E.164 format.
+          type: string
+        email:
+          type: string
+        nationalIdNumber:
+          type: string
+        employmentType:
+          $ref: '#/components/schemas/HttpEmploymentType'
+        civilStatus:
+          $ref: '#/components/schemas/HttpCivilStatus'
+        monthlyIncome:
+          description: Money object represented in the smallest currency unit
+          type: object
+          required:
+          - amount
+          - currency
+          - unit
+          properties:
+            amount:
+              type: integer
+              format: int64
+            currency:
+              type: string
+            unit:
+              type: string
+        housing:
+          $ref: '#/components/schemas/HttpHousing'
+        externalCustomerId:
+          type: string
+  securitySchemes:
+    httpAuth:
+      type: http
+      scheme: basic
