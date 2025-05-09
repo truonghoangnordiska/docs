@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: Card
   version: '1.0'
@@ -16,7 +16,6 @@ paths:
               $ref: '#/components/schemas/HttpCardOnboardingRequest'
             examples:
               DE:
-                summary: DE
                 value:
                   cardType: CREDIT
                   applicant:
@@ -46,7 +45,6 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               DE_KYC_DENIAL_TEST:
-                summary: DE_KYC_DENIAL_TEST
                 value:
                   cardType: CREDIT
                   applicant:
@@ -76,7 +74,6 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               DE_ADDRESS_MISMATCH_TEST:
-                summary: DE_ADDRESS_MISMATCH_TEST
                 value:
                   cardType: CREDIT
                   applicant:
@@ -106,7 +103,6 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               DE_NAME_MISMATCH_TEST:
-                summary: DE_NAME_MISMATCH_TEST
                 value:
                   cardType: CREDIT
                   applicant:
@@ -136,7 +132,6 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               DE_CREDIT_FAIL_TEST:
-                summary: DE_CREDIT_FAIL_TEST
                 value:
                   cardType: CREDIT
                   applicant:
@@ -166,7 +161,6 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               DE_INTERNAL_ERROR_TEST:
-                summary: DE_INTERNAL_ERROR_TEST
                 value:
                   cardType: CREDIT
                   applicant:
@@ -196,7 +190,6 @@ paths:
                     successUrl: https://example.com/success
                     failUrl: https://example.com/fail
               SE:
-                summary: SE
                 value:
                   cardType: CREDIT
                   applicant:
@@ -260,7 +253,7 @@ paths:
               examples:
                 DE_AWAITING_SIGNING:
                   value:
-                    id: 79b1629c-4831-4f20-a795-973760e51fd5
+                    id: 5a0caee1-b0e8-4611-a03e-815208c5b67d
                     status: AWAITING_SIGNING
                     additionalInformation:
                       signingUrl: https://example.com/sign
@@ -288,11 +281,11 @@ paths:
                         unit: MINOR
                       housing: OWNER
                       locale: de
-                    createdAt: '2025-05-07T11:19:44.584162Z'
-                    updatedAt: '2025-05-07T12:19:44.584168Z'
+                    createdAt: '2025-05-09T11:09:42.991298Z'
+                    updatedAt: '2025-05-09T12:09:42.991310Z'
                 DE_AWAITING_CARD_CREATION:
                   value:
-                    id: fdcc9e63-19e4-4bb2-a57a-81481d13a8ab
+                    id: 42e8feaa-2da9-428e-a7ad-e9ae4c825b4b
                     status: AWAITING_CARD_CREATION
                     additionalInformation:
                       creditAssessment:
@@ -300,8 +293,8 @@ paths:
                           currency: EUR
                           amount: 5000
                           unit: MINOR
-                        approvedAt: '2025-05-07T11:49:44.586962Z'
-                        validUntil: '2025-06-06T12:19:44.586964Z'
+                        approvedAt: '2025-05-09T11:39:43.026191Z'
+                        validUntil: '2025-06-08T12:09:43.026197Z'
                     cardType: CREDIT
                     applicant:
                       type: INDIVIDUAL
@@ -326,11 +319,11 @@ paths:
                         unit: MINOR
                       housing: OWNER
                       locale: de
-                    createdAt: '2025-05-07T11:19:44.588116Z'
-                    updatedAt: '2025-05-07T12:19:44.588117Z'
+                    createdAt: '2025-05-09T11:09:43.034676Z'
+                    updatedAt: '2025-05-09T12:09:43.034682Z'
                 DE_COMPLETED:
                   value:
-                    id: 6894d09f-4685-443b-a6e9-3742112d2af2
+                    id: 6ba462f8-96f4-41d1-a745-151f2d84f1d3
                     status: COMPLETED
                     additionalInformation:
                       creditAssessment:
@@ -338,8 +331,8 @@ paths:
                           currency: EUR
                           amount: 5000
                           unit: MINOR
-                        approvedAt: '2025-05-07T11:49:44.588640Z'
-                        validUntil: '2025-06-06T12:19:44.588641Z'
+                        approvedAt: '2025-05-09T11:39:43.039716Z'
+                        validUntil: '2025-06-08T12:09:43.039722Z'
                     cardType: CREDIT
                     applicant:
                       type: INDIVIDUAL
@@ -364,12 +357,12 @@ paths:
                         unit: MINOR
                       housing: OWNER
                       locale: de
-                    customerId: b02bc63f-fa85-4598-9ef3-2bbfafd86c82
-                    createdAt: '2025-05-07T11:19:44.588652Z'
-                    updatedAt: '2025-05-07T12:19:44.588653Z'
+                    customerId: 669d89e6-f9db-4b2a-a40d-0ee5f4515fb2
+                    createdAt: '2025-05-09T11:09:43.039754Z'
+                    updatedAt: '2025-05-09T12:09:43.039755Z'
                 SE:
                   value:
-                    id: 0c50a89a-1ca7-42e6-93d2-50fda9f54e66
+                    id: 32ec07cb-00db-430f-ac0d-f4b0ad7b89d8
                     status: PROCESSING
                     cardType: CREDIT
                     applicant:
@@ -385,8 +378,8 @@ paths:
                         amount: 45000
                         unit: MINOR
                       housing: RENTING
-                    createdAt: '2025-05-07T11:49:44.589142Z'
-                    updatedAt: '2025-05-07T12:19:44.589143Z'
+                    createdAt: '2025-05-09T11:39:43.044443Z'
+                    updatedAt: '2025-05-09T12:09:43.044450Z'
         '400':
           description: 'Invalid value for: path parameter onboarding-id'
           content:
@@ -526,9 +519,19 @@ components:
       - COMPANY
     HttpCardOnboardingRequest:
       title: HttpCardOnboardingRequest
-      oneOf:
-      - $ref: '#/components/schemas/HttpGermanCardOnboardingRequest'
-      - $ref: '#/components/schemas/HttpSwedishCardOnboardingRequest'
+      type: object
+      required:
+      - cardType
+      - applicant
+      properties:
+        cardType:
+          $ref: '#/components/schemas/HttpCardType'
+        applicant:
+          $ref: '#/components/schemas/HttpApplicant'
+        redirectUrls:
+          $ref: '#/components/schemas/HttpRedirectUrls'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
     HttpCardOnboardingResponse:
       title: HttpCardOnboardingResponse
       type: object
@@ -636,21 +639,6 @@ components:
       - NAME_MISMATCH
       - ID_VERIFICATION_FAILED
       - TIMEOUT
-    HttpGermanCardOnboardingRequest:
-      title: HttpGermanCardOnboardingRequest
-      type: object
-      required:
-      - cardType
-      - applicant
-      properties:
-        cardType:
-          $ref: '#/components/schemas/HttpCardType'
-        applicant:
-          $ref: '#/components/schemas/GermanApplicant'
-        redirectUrls:
-          $ref: '#/components/schemas/HttpRedirectUrls'
-        metadata:
-          $ref: '#/components/schemas/Metadata'
     HttpHousing:
       title: HttpHousing
       type: string
@@ -701,12 +689,10 @@ components:
       - failUrl
       properties:
         successUrl:
-          examples:
-          - https://example.com
+          example: https://example.com
           type: string
         failUrl:
-          examples:
-          - https://example.com
+          example: https://example.com
           type: string
     HttpRejectReason:
       title: HttpRejectReason
@@ -724,21 +710,6 @@ components:
       - MRS
       - MS
       - MISS
-    HttpSwedishCardOnboardingRequest:
-      title: HttpSwedishCardOnboardingRequest
-      type: object
-      required:
-      - cardType
-      - applicant
-      properties:
-        cardType:
-          $ref: '#/components/schemas/HttpCardType'
-        applicant:
-          $ref: '#/components/schemas/SwedishApplicant'
-        redirectUrls:
-          $ref: '#/components/schemas/HttpRedirectUrls'
-        metadata:
-          $ref: '#/components/schemas/Metadata'
     Metadata:
       title: Metadata
       description: 'Key-value map. You can use metadata to store additional, structured
@@ -763,8 +734,7 @@ components:
       - signingUrl
       properties:
         signingUrl:
-          examples:
-          - https://example.com
+          example: https://example.com
           type: string
     SwedishApplicant:
       title: SwedishApplicant
