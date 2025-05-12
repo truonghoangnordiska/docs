@@ -2,6 +2,8 @@ openapi: 3.0.3
 info:
   title: Card
   version: '1.0'
+servers:
+- url: https://partner-card.test.rockerapi.dev
 paths:
   /api/engagements/card/onboarding:
     post:
@@ -19,7 +21,6 @@ paths:
                 value:
                   cardType: CREDIT
                   applicant:
-                    type: INDIVIDUAL
                     nationality: DE
                     salutation: HERR
                     firstName: Hans
@@ -48,7 +49,6 @@ paths:
                 value:
                   cardType: CREDIT
                   applicant:
-                    type: INDIVIDUAL
                     nationality: DE
                     salutation: HERR
                     firstName: Kyc
@@ -77,7 +77,6 @@ paths:
                 value:
                   cardType: CREDIT
                   applicant:
-                    type: INDIVIDUAL
                     nationality: DE
                     salutation: HERR
                     firstName: Address
@@ -106,7 +105,6 @@ paths:
                 value:
                   cardType: CREDIT
                   applicant:
-                    type: INDIVIDUAL
                     nationality: DE
                     salutation: HERR
                     firstName: Name
@@ -135,7 +133,6 @@ paths:
                 value:
                   cardType: CREDIT
                   applicant:
-                    type: INDIVIDUAL
                     nationality: DE
                     salutation: HERR
                     firstName: Credit
@@ -164,7 +161,6 @@ paths:
                 value:
                   cardType: CREDIT
                   applicant:
-                    type: INDIVIDUAL
                     nationality: DE
                     salutation: HERR
                     firstName: Internal
@@ -193,7 +189,6 @@ paths:
                 value:
                   cardType: CREDIT
                   applicant:
-                    type: INDIVIDUAL
                     nationality: SE
                     phone: '+46701234567'
                     email: sven.svensson@example.com
@@ -253,13 +248,12 @@ paths:
               examples:
                 DE_AWAITING_SIGNING:
                   value:
-                    id: 5a0caee1-b0e8-4611-a03e-815208c5b67d
+                    id: 337e7298-6a70-4172-b249-866f992acd6f
                     status: AWAITING_SIGNING
                     additionalInformation:
                       signingUrl: https://example.com/sign
                     cardType: CREDIT
                     applicant:
-                      type: INDIVIDUAL
                       nationality: DE
                       salutation: HERR
                       firstName: Hans
@@ -281,11 +275,11 @@ paths:
                         unit: MINOR
                       housing: OWNER
                       locale: de
-                    createdAt: '2025-05-09T11:09:42.991298Z'
-                    updatedAt: '2025-05-09T12:09:42.991310Z'
+                    createdAt: '2025-05-12T05:57:39.981995Z'
+                    updatedAt: '2025-05-12T06:57:39.982001Z'
                 DE_AWAITING_CARD_CREATION:
                   value:
-                    id: 42e8feaa-2da9-428e-a7ad-e9ae4c825b4b
+                    id: c08bc6e9-b9b7-49f8-a72a-3e02278bd292
                     status: AWAITING_CARD_CREATION
                     additionalInformation:
                       creditAssessment:
@@ -293,11 +287,10 @@ paths:
                           currency: EUR
                           amount: 5000
                           unit: MINOR
-                        approvedAt: '2025-05-09T11:39:43.026191Z'
-                        validUntil: '2025-06-08T12:09:43.026197Z'
+                        approvedAt: '2025-05-12T06:27:39.987107Z'
+                        validUntil: '2025-06-11T06:57:39.987109Z'
                     cardType: CREDIT
                     applicant:
-                      type: INDIVIDUAL
                       nationality: DE
                       salutation: HERR
                       firstName: Hans
@@ -319,11 +312,11 @@ paths:
                         unit: MINOR
                       housing: OWNER
                       locale: de
-                    createdAt: '2025-05-09T11:09:43.034676Z'
-                    updatedAt: '2025-05-09T12:09:43.034682Z'
+                    createdAt: '2025-05-12T05:57:39.988067Z'
+                    updatedAt: '2025-05-12T06:57:39.988068Z'
                 DE_COMPLETED:
                   value:
-                    id: 6ba462f8-96f4-41d1-a745-151f2d84f1d3
+                    id: 5052caae-9d79-49f3-b476-ff2d6cfff8f3
                     status: COMPLETED
                     additionalInformation:
                       creditAssessment:
@@ -331,11 +324,10 @@ paths:
                           currency: EUR
                           amount: 5000
                           unit: MINOR
-                        approvedAt: '2025-05-09T11:39:43.039716Z'
-                        validUntil: '2025-06-08T12:09:43.039722Z'
+                        approvedAt: '2025-05-12T06:27:39.988588Z'
+                        validUntil: '2025-06-11T06:57:39.988589Z'
                     cardType: CREDIT
                     applicant:
-                      type: INDIVIDUAL
                       nationality: DE
                       salutation: HERR
                       firstName: Hans
@@ -357,16 +349,15 @@ paths:
                         unit: MINOR
                       housing: OWNER
                       locale: de
-                    customerId: 669d89e6-f9db-4b2a-a40d-0ee5f4515fb2
-                    createdAt: '2025-05-09T11:09:43.039754Z'
-                    updatedAt: '2025-05-09T12:09:43.039755Z'
+                    customerId: ce80dfab-1572-4574-87aa-5f69141a5e76
+                    createdAt: '2025-05-12T05:57:39.988600Z'
+                    updatedAt: '2025-05-12T06:57:39.988601Z'
                 SE:
                   value:
-                    id: 32ec07cb-00db-430f-ac0d-f4b0ad7b89d8
+                    id: 8a459a13-bfde-480d-991e-4b4e0c2b860e
                     status: PROCESSING
                     cardType: CREDIT
                     applicant:
-                      type: INDIVIDUAL
                       nationality: SE
                       phone: '+46701234567'
                       email: sven.svensson@example.com
@@ -378,10 +369,43 @@ paths:
                         amount: 45000
                         unit: MINOR
                       housing: RENTING
-                    createdAt: '2025-05-09T11:39:43.044443Z'
-                    updatedAt: '2025-05-09T12:09:43.044450Z'
+                    createdAt: '2025-05-12T06:27:39.989086Z'
+                    updatedAt: '2025-05-12T06:57:39.989087Z'
         '400':
           description: 'Invalid value for: path parameter onboarding-id'
+          content:
+            text/plain:
+              schema:
+                type: string
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpErrorBodyResponse'
+      security:
+      - httpAuth: []
+  /api/engagements/card/onboarding/business:
+    post:
+      tags:
+      - Card
+      description: Initiate business card onboarding process
+      operationId: InitiateBusinessCardOnboarding
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HttpBusinessCardOnboardingRequest'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpInitiateCardOnboardingResponse'
+        '400':
+          description: 'Invalid value for: body'
           content:
             text/plain:
               schema:
@@ -416,7 +440,6 @@ components:
       title: GermanApplicant
       type: object
       required:
-      - type
       - nationality
       - salutation
       - firstName
@@ -432,8 +455,6 @@ components:
       - housing
       - locale
       properties:
-        type:
-          $ref: '#/components/schemas/HttpApplicantType'
         nationality:
           description: ISO 3166-1 alpha-2 country code
           type: string
@@ -511,12 +532,89 @@ components:
       oneOf:
       - $ref: '#/components/schemas/GermanApplicant'
       - $ref: '#/components/schemas/SwedishApplicant'
-    HttpApplicantType:
-      title: HttpApplicantType
-      type: string
-      enum:
-      - INDIVIDUAL
-      - COMPANY
+    HttpBusinessApplicant:
+      title: HttpBusinessApplicant
+      type: object
+      required:
+      - nationality
+      - salutation
+      - firstName
+      - lastName
+      - phone
+      - email
+      - dateOfBirth
+      - placeOfBirth
+      - address
+      - employmentType
+      - civilStatus
+      - monthlyIncome
+      - housing
+      - locale
+      properties:
+        nationality:
+          description: ISO 3166-1 alpha-2 country code
+          type: string
+        salutation:
+          $ref: '#/components/schemas/HttpSalutation'
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          description: E.164 format.
+          type: string
+        email:
+          type: string
+        dateOfBirth:
+          description: ISO 8601 (YYYY-MM-DD)
+          type: string
+        placeOfBirth:
+          type: string
+        address:
+          $ref: '#/components/schemas/HttpAddress'
+        employmentType:
+          $ref: '#/components/schemas/HttpEmploymentType'
+        civilStatus:
+          $ref: '#/components/schemas/HttpCivilStatus'
+        monthlyIncome:
+          description: Money object represented in the smallest currency unit
+          type: object
+          required:
+          - amount
+          - currency
+          - unit
+          properties:
+            amount:
+              type: integer
+              format: int64
+            currency:
+              type: string
+            unit:
+              type: string
+        housing:
+          $ref: '#/components/schemas/HttpHousing'
+        externalCustomerId:
+          type: string
+        locale:
+          $ref: '#/components/schemas/HttpLocale'
+    HttpBusinessCardOnboardingRequest:
+      title: HttpBusinessCardOnboardingRequest
+      type: object
+      required:
+      - cardType
+      - applicant
+      - company
+      properties:
+        cardType:
+          $ref: '#/components/schemas/HttpCardType'
+        applicant:
+          $ref: '#/components/schemas/HttpBusinessApplicant'
+        company:
+          $ref: '#/components/schemas/HttpCompany'
+        redirectUrls:
+          $ref: '#/components/schemas/HttpRedirectUrls'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
     HttpCardOnboardingRequest:
       title: HttpCardOnboardingRequest
       type: object
@@ -581,6 +679,21 @@ components:
       - COHABITANT
       - DIVORCED
       - WIDOWED
+    HttpCompany:
+      title: HttpCompany
+      type: object
+      required:
+      - name
+      - regNo
+      properties:
+        name:
+          type: string
+        regNo:
+          type: string
+        city:
+          type: string
+        vatNo:
+          type: string
     HttpCreditAssessment:
       title: HttpCreditAssessment
       type: object
@@ -740,7 +853,6 @@ components:
       title: SwedishApplicant
       type: object
       required:
-      - type
       - nationality
       - phone
       - email
@@ -750,8 +862,6 @@ components:
       - monthlyIncome
       - housing
       properties:
-        type:
-          $ref: '#/components/schemas/HttpApplicantType'
         nationality:
           description: ISO 3166-1 alpha-2 country code
           type: string
