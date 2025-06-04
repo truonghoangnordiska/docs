@@ -1,7 +1,9 @@
 ---
-title: "Integration Guide"
+title: "Onboarding Integration Guide"
 description: "Complete technical integration guide for partners implementing card onboarding with the Nordiska Card Service API"
 ---
+
+# Onboarding
 
 This document provides technical integration guidance for partners implementing card onboarding with the Nordiska Card Service API.
 
@@ -27,7 +29,7 @@ sequenceDiagram
     participant Enfuce
 
     Customer->>Partner: 1. Initiate card application
-    Partner->>CardService: 2. POST /api/v1/card-engagements/onboarding
+    Partner->>CardService: 2. POST /api/engagements/card/onboarding
     Note over CardService: Status: PROCESSING
     CardService->>CardService: 3. KYC, Credit checks
     
@@ -56,8 +58,8 @@ sequenceDiagram
 <info>
   **Base URLs**
 
-  * Development: `https://card.dev.nordiska.com`
-  * Production: `https://card.prod.nordiska.com`
+  - Development: `https://card.dev.nordiska.com`
+  - Production: `https://card.prod.nordiska.com`
 </info>
 
 ### Authentication
@@ -78,7 +80,7 @@ Content-Type: application/json
 ```bash cURL Example
 # UUID: 550e8400-e29b-41d4-a716-446655440000
 # Base64 encode "550e8400-e29b-41d4-a716-446655440000:" (note the colon)
-curl -X POST https://card.dev.nordiska.com/api/v1/card-engagements/onboarding \
+curl -X POST https://card.dev.nordiska.com/api/engagements/card/onboarding \
   -H "Authorization: Basic NTUwZTg0MDAtZTI5Yi00MWQ0LWE3MTYtNDQ2NjU1NDQwMDAwOg==" \
   -H "Content-Type: application/json"
 ```
@@ -92,7 +94,7 @@ curl -X POST https://card.dev.nordiska.com/api/v1/card-engagements/onboarding \
 <CodeGroup>
 
 ```http Request
-POST /api/v1/card-engagements/onboarding
+POST /api/engagements/card/onboarding
 Content-Type: application/json
 Authorization: Basic <base64(uuid:)>
 ```
@@ -151,7 +153,7 @@ Authorization: Basic <base64(uuid:)>
 <CodeGroup>
 
 ```http Request
-GET /api/v1/card-engagements/onboarding/{onboarding-id}
+GET /api/engagements/card/onboarding/{onboarding-id}
 Authorization: Basic <base64(uuid:)>
 ```
 
@@ -188,8 +190,8 @@ The onboarding process progresses through the following states:
     - Credit scoring (Schufa)
 
     <info>
-  **Duration**: Typically 3-10 seconds
-</info>
+      **Duration**: Typically 3-10 seconds
+    </info>
   </Tab>
   <Tab title="AWAITING_SIGNING">
     **Application approved** and waiting for customer to sign the agreement.
@@ -359,8 +361,8 @@ The onboarding process progresses through the following states:
 <info>
   All monetary amounts follow **ISO 4217** currency standards using the "minor unit" format:
 
-  * **EUR 50.00** = `{"currency": "EUR", "amount": 5000, "unit": "MINOR"}`
-  * **SEK 450.00** = `{"currency": "SEK", "amount": 45000, "unit": "MINOR"}`
+  - **EUR 50.00** = `{"currency": "EUR", "amount": 5000, "unit": "MINOR"}`
+  - **SEK 450.00** = `{"currency": "SEK", "amount": 45000, "unit": "MINOR"}`
 
   This ensures consistent currency handling across all API operations.
 </info>
