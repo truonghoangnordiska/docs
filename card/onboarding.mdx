@@ -1,9 +1,7 @@
 ---
-title: "Onboarding Integration Guide"
+title: "Integration Guide"
 description: "Complete technical integration guide for partners implementing card onboarding with the Nordiska Card Service API"
 ---
-
-# Onboarding
 
 This document provides technical integration guidance for partners implementing card onboarding with the Nordiska Card Service API.
 
@@ -58,8 +56,8 @@ sequenceDiagram
 <info>
   **Base URLs**
 
-  - Development: `https://card.dev.nordiska.com`
-  - Production: `https://card.prod.nordiska.com`
+  * Development: `https://card.dev.nordiska.com`
+  * Production: `https://card.prod.nordiska.com`
 </info>
 
 ### Authentication
@@ -190,8 +188,8 @@ The onboarding process progresses through the following states:
     - Credit scoring (Schufa)
 
     <info>
-      **Duration**: Typically 3-10 seconds
-    </info>
+  **Duration**: Typically 3-10 seconds
+</info>
   </Tab>
   <Tab title="AWAITING_SIGNING">
     **Application approved** and waiting for customer to sign the agreement.
@@ -361,8 +359,8 @@ The onboarding process progresses through the following states:
 <info>
   All monetary amounts follow **ISO 4217** currency standards using the "minor unit" format:
 
-  - **EUR 50.00** = `{"currency": "EUR", "amount": 5000, "unit": "MINOR"}`
-  - **SEK 450.00** = `{"currency": "SEK", "amount": 45000, "unit": "MINOR"}`
+  * **EUR 50.00** = `{"currency": "EUR", "amount": 5000, "unit": "MINOR"}`
+  * **SEK 450.00** = `{"currency": "SEK", "amount": 45000, "unit": "MINOR"}`
 
   This ensures consistent currency handling across all API operations.
 </info>
