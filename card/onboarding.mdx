@@ -139,6 +139,7 @@ Each status may include additional information in the response. When there is no
 
 ```mermaid
 stateDiagram-v2
+    direction LR
     [*] --> PROCESSING
     PROCESSING --> AWAITING_SIGNING: Approved
     PROCESSING --> REJECTED: Failed credit assessment
