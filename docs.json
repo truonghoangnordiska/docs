@@ -31,6 +31,12 @@
               "essentials/navigation",
               "essentials/reusable-snippets"
             ]
+          },
+          {
+            "group": "Card",
+            "pages": [
+              "card/onboarding"
+            ]
           }
         ]
       },
