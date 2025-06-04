@@ -1,153 +1,457 @@
 ---
-title: "Onboarding"
+title: "Onboarding Integration Guide"
+description: "Complete technical integration guide for partners implementing card onboarding with the Nordiska Card Service API"
 ---
 
-The card onboarding process can be in one of the following states:
+# Onboarding
 
-## Processing
+This document provides technical integration guidance for partners implementing card onboarding with the Nordiska Card Service API.
 
-Initial state when the onboarding request is being processed. This includes:
+## Overview
 
-- Validating the application
-- Internal checks (invoice payment history, block lists, etc)
-- Conducting KYC (PEP and sanction lists)
-- Performing credit checks (Schufa)
+The card onboarding process enables your customers to apply for and receive credit, debit, or prepaid cards. The system handles:
 
-## Awaiting signing
+- **Identity Verification**: KYC checks, PEP/sanction screening
+- **Credit Assessment**: Credit scoring and limit determination
+- **Document Signing**: Digital signing of credit agreements
+- **Card Creation**: Issuing cards
 
-The application has been approved and is waiting for the customer to sign the agreement. This state includes:
+## Integration Flow
 
-- A identification and signing URL provided in the `additionalInformation`
-- Customer needs to complete the digital signing process
+### High-Level Process
 
-## Awaiting card creation
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant Partner
+    participant CardService
+    participant SigningService
+    participant Enfuce
 
-The application has been signed and is waiting for the card to be created. This state indicates:
+    Customer->>Partner: 1. Initiate card application
+    Partner->>CardService: 2. POST /api/v1/card-engagements/onboarding
+    Note over CardService: Status: PROCESSING
+    CardService->>CardService: 3. KYC, Credit checks
+    
+    alt Application Approved
+        CardService->>Partner: 4. Webhook: SIGNING_SESSION_CREATED
+        Note over CardService: Status: AWAITING_SIGNING
+        Partner->>Customer: 5. Redirect to signing URL
+        Customer->>SigningService: 6. Complete signing
+        CardService->>Partner: 7. Webhook: SIGNING_SESSION_COMPLETED
+        Note over CardService: Status: AWAITING_CARD_CREATION
+        Partner->>Enfuce: 8. Create customer/account/card
+        Enfuce->>CardService: 9. Notify card created
+        CardService->>Partner: 10. Webhook: ONBOARDING_COMPLETED
+        Note over CardService: Status: COMPLETED
+    else Application Rejected
+        CardService->>Partner: Webhook: ONBOARDING_REJECTED
+        Note over CardService: Status: REJECTED
+    else Application Failed
+        CardService->>Partner: Webhook: ONBOARDING_FAILED
+        Note over CardService: Status: FAILED
+    end
+```
 
-- All required documents have been signed
-- Partner should proceed to create customer, account, and card in Enfuce
-- We will get notified by Enfuce about that the entities have been created and will validate the data
-- Credit assessment information is provided in the `additionalInformation`
+## API Endpoints
 
-## Completed
+<info>
+  **Base URLs**
 
-The onboarding process has been successfully finished. This means:
+  - Development: `https://card.dev.nordiska.com`
+  - Production: `https://card.prod.nordiska.com`
+</info>
 
-- The card has been created
-- The card application has been fully processed
-- Credit engagement has been set up
-- Credit assessment information is included in the `additionalInformation`
+### Authentication
 
-## Rejected
+All API calls use HTTP Basic Authentication where:
 
-The application has been rejected. The `additionalInformation` will contain one of the following rejection reasons:
-
-- `KYC_DENIAL`: Customer failed KYC verification (PEP, Sanction). Manual handling is needed on Nordiska's side, for example we might need to reach out to the customer for additional information.
-- `CREDIT_SCORING_DENIAL`: Customer failed credit scoring requirements. Customer can try apply again in 3 months.
-
-## Failed
-
-An unexpected error occurred during the onboarding process. Create a new onboarding if you want to try again for the user. The `additionalInformation` will contain:
-
-- `INTERNAL_ERROR`: System error that needs investigation
-- `ADDRESS_MISMATCH`: The provided address does not match official records
-- `NAME_MISMATCH`: The provided name of the customer does not match official records
-- `ID_VERIFICATION_FAILED`: Customer's identity verification failed
-- `TIMEOUT`: Timeout
-
-## Additional Information
-
-Each status may include additional information in the response. When there is no additional information, the field will be omitted entirely from the response:
+- **Username**: Your assigned UUID (e.g., `550e8400-e29b-41d4-a716-446655440000`)
+- **Password**: Empty (no password required)
 
 <CodeGroup>
 
-```json Processing
+```http Required Headers
+Authorization: Basic <base64(uuid:)>
+Content-Type: application/json
+```
+
+
+```bash cURL Example
+# UUID: 550e8400-e29b-41d4-a716-446655440000
+# Base64 encode "550e8400-e29b-41d4-a716-446655440000:" (note the colon)
+curl -X POST https://card.dev.nordiska.com/api/v1/card-engagements/onboarding \
+  -H "Authorization: Basic NTUwZTg0MDAtZTI5Yi00MWQ0LWE3MTYtNDQ2NjU1NDQwMDAwOg==" \
+  -H "Content-Type: application/json"
+```
+
+</CodeGroup>
+
+### Core Endpoints
+
+#### 1. Initiate Onboarding
+
+<CodeGroup>
+
+```http Request
+POST /api/v1/card-engagements/onboarding
+Content-Type: application/json
+Authorization: Basic <base64(uuid:)>
+```
+
+
+```json Request Body
 {
-  "status": "PROCESSING"
+  "cardType": "CREDIT",
+  "applicant": {
+    "type": "INDIVIDUAL",
+    "nationality": "DE",
+    "salutation": "HERR",
+    "firstName": "Hans",
+    "lastName": "Müller",
+    "phone": "+491701234567",
+    "email": "hans.mueller@example.com",
+    "dateOfBirth": "1985-07-15",
+    "placeOfBirth": "Berlin",
+    "address": {
+      "streetLine1": "Hauptstraße 10",
+      "streetLine2": null,
+      "city": "Berlin",
+      "postalCode": "10115",
+      "country": "DE"
+    },
+    "employmentType": "PERMANENT",
+    "civilStatus": "MARRIED",
+    "monthlyIncome": {
+      "currency": "EUR",
+      "amount": 350000,
+      "unit": "MINOR"
+    },
+    "housing": "OWNER",
+    "locale": "de"
+  },
+  "redirectUrls": {
+    "successUrl": "https://your-app.com/onboarding/success",
+    "failUrl": "https://your-app.com/onboarding/fail"
+  }
 }
 ```
 
 
-```json Awaiting signing
+```json Response
 {
-    "status": "AWAITING_SIGNING",
-    "additionalInformation": {
-        "signingUrl": "https://sign.dev.nordiska.com/123"
-    }
-}
-```
-
-
-```json Awaiting card creation
-{
-    "status": "AWAITING_CARD_CREATION",
-    "additionalInformation": {
-        "creditAssessment": {
-            "approvedLimit": {
-                "currency": "EUR",
-                "amount": 5000,
-                "unit": "MINOR"
-            },
-            "approvedAt": "2025-03-10T18:01:44.216143374Z",
-            "validUntil": "2025-04-09T18:01:44.216147184Z"
-        }
-    }
-}
-```
-
-
-```json Completed
-{
-    "status": "COMPLETED",
-    "additionalInformation": {
-        "creditAssessment": {
-            "approvedLimit": {
-                "currency": "EUR",
-                "amount": 5000,
-                "unit": "MINOR"
-            },
-            "approvedAt": "2025-03-10T18:01:44.216143374Z",
-            "validUntil": "2025-04-09T18:01:44.216147184Z"
-        }
-    }
-}
-```
-
-
-```json Rejected
-{
-    "status": "REJECTED",
-    "additionalInformation": {
-        "rejectReason": "KYC_DENIAL"
-    }
-}
-```
-
-
-```json Failed
-{
-    "status": "FAILED",
-    "additionalInformation": {
-        "failureCode": "INTERNAL_ERROR"
-    }
+  "id": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
+  "status": "PROCESSING",
+  "createdAt": "2024-01-15T10:30:00Z"
 }
 ```
 
 </CodeGroup>
 
-## State Transitions
+#### 2. Get Onboarding Status
 
-```mermaid
-flowchart LR
-    Start([Start]) --> PROCESSING
-    PROCESSING --> |Approved| AWAITING_SIGNING
-    PROCESSING --> |Failed credit assessment| REJECTED
-    PROCESSING --> |Retryable error| FAILED
-    AWAITING_SIGNING --> |Signed| AWAITING_CARD_CREATION
-    AWAITING_SIGNING --> |Retryable error| FAILED
-    AWAITING_CARD_CREATION --> |Card created| COMPLETED
-    AWAITING_CARD_CREATION --> |Retryable error| FAILED
-    COMPLETED --> End1([End])
-    REJECTED --> End2([End])
-    FAILED --> End3([End])
+<CodeGroup>
+
+```http Request
+GET /api/v1/card-engagements/onboarding/{onboarding-id}
+Authorization: Basic <base64(uuid:)>
 ```
+
+
+```json Response
+{
+  "id": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
+  "status": "AWAITING_SIGNING",
+  "cardType": "CREDIT",
+  "applicant": { /* applicant data */ },
+  "additionalInformation": {
+    "signingUrl": "https://sign.dev.nordiska.com/?sessionId=abc123"
+  },
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-15T10:35:00Z"
+}
+```
+
+</CodeGroup>
+
+## Onboarding States
+
+The onboarding process progresses through the following states:
+
+<Tabs>
+  <Tab title="PROCESSING">
+    **Initial state** when the onboarding request is being processed.
+
+    **System Actions**:
+
+    - Application validation
+    - Invoice payment history checks
+    - KYC verification (PEP, sanction lists)
+    - Credit scoring (Schufa)
+
+    <info>
+      **Duration**: Typically 3-10 seconds
+    </info>
+  </Tab>
+  <Tab title="AWAITING_SIGNING">
+    **Application approved** and waiting for customer to sign the agreement.
+
+    **Additional Information**:
+
+    ```json
+    {
+      "signingUrl": "https://sign.dev.nordiska.com/?sessionId=abc123"
+    }
+    ```
+
+    **Partner Actions**:
+
+    - Redirect customer to the provided signing URL
+    - Monitor for `SIGNING_SESSION_COMPLETED` webhook
+  </Tab>
+  <Tab title="AWAITING_CARD_CREATION">
+    **Documents signed** and waiting for card creation in Enfuce.
+
+    **Additional Information**:
+
+    ```json
+    {
+      "creditAssessment": {
+        "approvedLimit": {
+          "currency": "EUR",
+          "amount": 5000,
+          "unit": "MINOR"
+        },
+        "approvedAt": "2024-01-15T10:35:00Z",
+        "validUntil": "2024-02-14T10:35:00Z"
+      }
+    }
+    ```
+
+    **Partner Actions**:
+
+    - Create customer in Enfuce
+    - Create account in Enfuce
+    - Create physical card in Enfuce
+    - Notify Nordiska of successful card creation
+  </Tab>
+  <Tab title="COMPLETED">
+    **Onboarding successfully finished**. Card has been created and credit engagement set up.
+
+    ```json
+    {
+      "creditAssessment": {
+        "approvedLimit": {
+          "currency": "EUR",
+          "amount": 5000,
+          "unit": "MINOR"
+        },
+        "approvedAt": "2024-01-15T10:35:00Z",
+        "validUntil": "2024-02-14T10:35:00Z"
+      },
+      "engagementId": "8b9fd836-9d01-4c91-b0e0-17dfc26944e9"
+    }
+    ```
+  </Tab>
+  <Tab title="REJECTED">
+    **Application rejected** due to failed checks.
+
+    **Rejection Reasons**:
+
+    - `KYC_DENIAL`: Failed KYC verification (requires manual review)
+    - `CREDIT_SCORING_DENIAL`: Failed credit requirements (customer can reapply in 3 months)
+    - `UNAUTHORIZED_SIGNATORY`: Individual not authorized signatory
+
+    **Additional Information**:
+
+    ```json
+    {
+      "rejectReason": "KYC_DENIAL"
+    }
+    ```
+  </Tab>
+  <Tab title="FAILED">
+    **Unexpected error** occurred during processing.
+
+    **Failure Codes**:
+
+    - `INTERNAL_ERROR`: System error requiring investigation
+    - `ADDRESS_MISMATCH`: Address doesn't match official records
+    - `NAME_MISMATCH`: Name doesn't match official records
+    - `ID_VERIFICATION_FAILED`: Identity verification failed
+    - `TIMEOUT`: Process timeout
+
+    **Additional Information**:
+
+    ```json
+    {
+      "failureCode": "ADDRESS_MISMATCH"
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Webhook Events
+
+<warning>
+  **Configuration Required**
+  Configure your webhook endpoint by reaching to your Nordiska contact person.
+</warning>
+
+### Event Types
+
+<CodeGroup>
+
+```json SIGNING_SESSION_CREATED
+{
+  "eventType": "SIGNING_SESSION_CREATED",
+  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
+  "signingSessionId": "1fa6ef79-16e7-4665-ae78-c885e65e372b",
+  "signingUrl": "https://sign.dev.nordiska.com/?sessionId=1fa6ef79-16e7-4665-ae78-c885e65e372b"
+}
+```
+
+
+```json SIGNING_SESSION_COMPLETED
+{
+  "eventType": "SIGNING_SESSION_COMPLETED",
+  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
+  "signingSessionId": "1fa6ef79-16e7-4665-ae78-c885e65e372b"
+}
+```
+
+
+```json ONBOARDING_COMPLETED
+{
+  "eventType": "ONBOARDING_COMPLETED",
+  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55"
+}
+```
+
+
+```json ONBOARDING_REJECTED
+{
+  "eventType": "ONBOARDING_REJECTED",
+  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
+  "rejectReason": "KYC_DENIAL"
+}
+```
+
+
+```json ONBOARDING_FAILED
+{
+  "eventType": "ONBOARDING_FAILED",
+  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
+  "failureCode": "INTERNAL_ERROR"
+}
+```
+
+</CodeGroup>
+
+### Event Descriptions
+
+- **SIGNING_SESSION_CREATED**: Triggered when a signing session is created for approved applications
+- **SIGNING_SESSION_COMPLETED**: Triggered when customer completes the signing process
+- **ONBOARDING_COMPLETED**: Triggered when the entire onboarding process is finished
+- **ONBOARDING_REJECTED**: Triggered when the application is rejected
+- **ONBOARDING_FAILED**: Triggered when an error occurs during processing
+
+### Money Format
+
+<info>
+  All monetary amounts follow **ISO 4217** currency standards using the "minor unit" format:
+
+  - **EUR 50.00** = `{"currency": "EUR", "amount": 5000, "unit": "MINOR"}`
+  - **SEK 450.00** = `{"currency": "SEK", "amount": 45000, "unit": "MINOR"}`
+
+  This ensures consistent currency handling across all API operations.
+</info>
+
+## Error Handling
+
+### HTTP Status Codes
+
+| Status | Description                                   |
+| ------ | --------------------------------------------- |
+| 200    | Success                                       |
+| 400    | Bad Request (validation errors)               |
+| 401    | Unauthorized (invalid UUID or authentication) |
+| 404    | Not Found (onboarding not found)              |
+| 429    | Rate Limited                                  |
+| 500    | Internal Server Error                         |
+
+### Error Response Format
+
+```json
+{
+    "code": "INTERNAL_ERROR",
+    "message": "Message"
+}
+```
+
+## Testing
+
+### Test Cases
+
+<info>
+  The system supports special test cases for development by using specific names in the applicant data.
+</info>
+
+<Tabs>
+  <Tab title="KYC Denial">
+    ```json
+    {
+      "applicant": {
+        "firstName": "Kyc",
+        "lastName": "Denial"
+      }
+    }
+    ```
+
+    **Result**: `REJECTED` with `KYC_DENIAL`
+  </Tab>
+  <Tab title="Credit Failure">
+    ```json
+    {
+      "applicant": {
+        "firstName": "Credit", 
+        "lastName": "Fail"
+      }
+    }
+    ```
+
+    **Result**: `REJECTED` with `CREDIT_SCORING_DENIAL`
+  </Tab>
+  <Tab title="Address Mismatch">
+    ```json
+    {
+      "applicant": {
+        "firstName": "Address",
+        "lastName": "Mismatch"
+      }
+    }
+    ```
+
+    **Result**: `FAILED` with `ADDRESS_MISMATCH`
+  </Tab>
+  <Tab title="Internal Error">
+    ```json
+    {
+      "applicant": {
+        "firstName": "Internal",
+        "lastName": "Error"
+      }
+    }
+    ```
+
+    **Result**: `FAILED` with `INTERNAL_ERROR`
+  </Tab>
+</Tabs>
+
+---
+
+## Changelog
+
+- **v1.0.0** (2024-01-15): Initial release
+- **v1.1.0** (2024-02-01): Added Swedish applicant support
+- **v1.2.0** (2024-03-01): Enhanced webhook retry mechanism
