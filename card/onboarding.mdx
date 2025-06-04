@@ -138,17 +138,16 @@ Each status may include additional information in the response. When there is no
 ## State Transitions
 
 ```mermaid
-stateDiagram-v2
-    direction LR
-    [*] --> PROCESSING
-    PROCESSING --> AWAITING_SIGNING: Approved
-    PROCESSING --> REJECTED: Failed credit assessment
-    PROCESSING --> FAILED: Retryable error
-    AWAITING_SIGNING --> AWAITING_CARD_CREATION: Signed
-    AWAITING_SIGNING --> FAILED: Retryable error 
-    AWAITING_CARD_CREATION --> COMPLETED: Card created
-    AWAITING_CARD_CREATION --> FAILED: Retryable error 
-    COMPLETED --> [*]
-    REJECTED --> [*]
-    FAILED --> [*]
+flowchart LR
+    Start([Start]) --> PROCESSING
+    PROCESSING --> |Approved| AWAITING_SIGNING
+    PROCESSING --> |Failed credit assessment| REJECTED
+    PROCESSING --> |Retryable error| FAILED
+    AWAITING_SIGNING --> |Signed| AWAITING_CARD_CREATION
+    AWAITING_SIGNING --> |Retryable error| FAILED
+    AWAITING_CARD_CREATION --> |Card created| COMPLETED
+    AWAITING_CARD_CREATION --> |Retryable error| FAILED
+    COMPLETED --> End1([End])
+    REJECTED --> End2([End])
+    FAILED --> End3([End])
 ```
