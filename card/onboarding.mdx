@@ -59,7 +59,16 @@ An unexpected error occurred during the onboarding process. Create a new onboard
 
 Each status may include additional information in the response. When there is no additional information, the field will be omitted entirely from the response:
 
-```json
+<CodeGroup>
+
+```json Processing
+{
+  "status": "PROCESSING"
+}
+```
+
+
+```json Awaiting signing
 {
     "status": "AWAITING_SIGNING",
     "additionalInformation": {
@@ -68,7 +77,8 @@ Each status may include additional information in the response. When there is no
 }
 ```
 
-```json
+
+```json Awaiting card creation
 {
     "status": "AWAITING_CARD_CREATION",
     "additionalInformation": {
@@ -85,7 +95,8 @@ Each status may include additional information in the response. When there is no
 }
 ```
 
-```json
+
+```json Completed
 {
     "status": "COMPLETED",
     "additionalInformation": {
@@ -102,7 +113,8 @@ Each status may include additional information in the response. When there is no
 }
 ```
 
-```json
+
+```json Rejected
 {
     "status": "REJECTED",
     "additionalInformation": {
@@ -111,7 +123,8 @@ Each status may include additional information in the response. When there is no
 }
 ```
 
-```json
+
+```json Failed
 {
     "status": "FAILED",
     "additionalInformation": {
@@ -119,6 +132,8 @@ Each status may include additional information in the response. When there is no
     }
 }
 ```
+
+</CodeGroup>
 
 ## State Transitions
 
