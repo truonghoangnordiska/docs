@@ -18,6 +18,40 @@ The card onboarding process enables your customers to apply for and receive cred
 
 ## Integration Flow
 
+## API Endpoints
+
+<Info>
+  **Base URLs**
+
+  - Development: `https://card.dev.nordiska.com`
+  - Production: `https://card.prod.nordiska.com`
+</Info>
+
+### Authentication
+
+All API calls use HTTP Basic Authentication where:
+
+- **Username**: Your assigned API-Key (e.g., `550e8400-e29b-41d4-a716-446655440000`)
+- **Password**: Empty (no password required)
+
+<CodeGroup>
+
+```http Required Headers
+Authorization: Basic <base64(uuid:)>
+Content-Type: application/json
+```
+
+
+```bash cURL Example
+# API-Key: 550e8400-e29b-41d4-a716-446655440000
+# Base64 encode "550e8400-e29b-41d4-a716-446655440000:" (note the colon)
+curl -X POST https://card.dev.nordiska.com/api/engagements/card/onboarding \
+  -H "Authorization: Basic NTUwZTg0MDAtZTI5Yi00MWQ0LWE3MTYtNDQ2NjU1NDQwMDAwOg==" \
+  -H "Content-Type: application/json"
+```
+
+</CodeGroup>
+
 ### High-Level Process
 
 ```mermaid
@@ -52,40 +86,6 @@ sequenceDiagram
         Note over CardService: Status: FAILED
     end
 ```
-
-## API Endpoints
-
-<Info>
-  **Base URLs**
-
-  - Development: `https://card.dev.nordiska.com`
-  - Production: `https://card.prod.nordiska.com`
-</Info>
-
-### Authentication
-
-All API calls use HTTP Basic Authentication where:
-
-- **Username**: Your assigned API-Key (e.g., `550e8400-e29b-41d4-a716-446655440000`)
-- **Password**: Empty (no password required)
-
-<CodeGroup>
-
-```http Required Headers
-Authorization: Basic <base64(uuid:)>
-Content-Type: application/json
-```
-
-
-```bash cURL Example
-# API-Key: 550e8400-e29b-41d4-a716-446655440000
-# Base64 encode "550e8400-e29b-41d4-a716-446655440000:" (note the colon)
-curl -X POST https://card.dev.nordiska.com/api/engagements/card/onboarding \
-  -H "Authorization: Basic NTUwZTg0MDAtZTI5Yi00MWQ0LWE3MTYtNDQ2NjU1NDQwMDAwOg==" \
-  -H "Content-Type: application/json"
-```
-
-</CodeGroup>
 
 ### Core Endpoints
 
