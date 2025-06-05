@@ -26,25 +26,15 @@
         "openapi": "https://partner-card.test.public.rockerapi.dev/docs/docs.yaml"
       }
     ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    "anchors": [
+      {
+        "anchor": "Documentation",
+        "pages": [
+          "introduction"
+        ],
+        "icon": "book-open-cover"
+      }
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",
