@@ -34,8 +34,8 @@
     ]
   },
   "logo": {
-    "light": "/logo/nordiska_logo_blue.png",
-    "dark": "/logo/nordiska_logo_white.png"
+    "light": "/logo/Nordiska_Logo_Blue.png",
+    "dark": "/logo/Nordiska_Logo_White.png"
   },
   "navbar": {
     "links": [
