@@ -38,11 +38,10 @@
           },
           {
             "group": "API",
-            "pages": [
-              {
-                "openapi": "https://partner-card.test.public.rockerapi.dev/docs/docs.yaml"
-              }
-            ]
+            "openapi": {
+              "source": "https://partner-card.test.public.rockerapi.dev/docs/docs.yaml",
+              "directory": "api-reference"
+            }
           }
         ]
       }
