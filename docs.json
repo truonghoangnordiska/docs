@@ -14,6 +14,12 @@
         "tab": "Guides",
         "groups": [
           {
+            "group": "Documentation",
+            "pages": [
+              "introduction"
+            ]
+          },
+          {
             "group": "Card",
             "pages": [
               "card/onboarding"
@@ -22,17 +28,8 @@
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "API",
         "openapi": "https://partner-card.test.public.rockerapi.dev/docs/docs.yaml"
-      }
-    ],
-    "anchors": [
-      {
-        "anchor": "Documentation",
-        "pages": [
-          "introduction"
-        ],
-        "icon": "book-open-cover"
       }
     ]
   },
