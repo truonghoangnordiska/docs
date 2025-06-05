@@ -38,7 +38,7 @@
           },
           {
             "group": "API",
-            "openapi": "https://partner-card.test.public.rockerapi.dev/docs"
+            "openapi": "https://partner-card.test.public.rockerapi.dev/docs/docs.yaml"
           }
         ]
       }
