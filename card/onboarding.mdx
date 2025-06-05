@@ -66,7 +66,7 @@ sequenceDiagram
 
 All API calls use HTTP Basic Authentication where:
 
-- **Username**: Your assigned UUID (e.g., `550e8400-e29b-41d4-a716-446655440000`)
+- **Username**: Your assigned API-Key (e.g., `550e8400-e29b-41d4-a716-446655440000`)
 - **Password**: Empty (no password required)
 
 <CodeGroup>
@@ -78,7 +78,7 @@ Content-Type: application/json
 
 
 ```bash cURL Example
-# UUID: 550e8400-e29b-41d4-a716-446655440000
+# API-Key: 550e8400-e29b-41d4-a716-446655440000
 # Base64 encode "550e8400-e29b-41d4-a716-446655440000:" (note the colon)
 curl -X POST https://card.dev.nordiska.com/api/engagements/card/onboarding \
   -H "Authorization: Basic NTUwZTg0MDAtZTI5Yi00MWQ0LWE3MTYtNDQ2NjU1NDQwMDAwOg==" \
@@ -196,8 +196,6 @@ The onboarding process progresses through the following states:
   <Tab title="AWAITING_SIGNING">
     **Application approved** and waiting for customer to sign the agreement.
 
-    **Additional Information**:
-
     ```json
     {
       "signingUrl": "https://sign.dev.nordiska.com/?sessionId=abc123"
@@ -211,8 +209,6 @@ The onboarding process progresses through the following states:
   </Tab>
   <Tab title="AWAITING_CARD_CREATION">
     **Documents signed** and waiting for card creation in Enfuce.
-
-    **Additional Information**:
 
     ```json
     {
@@ -233,7 +229,6 @@ The onboarding process progresses through the following states:
     - Create customer in Enfuce
     - Create account in Enfuce
     - Create physical card in Enfuce
-    - Notify Nordiska of successful card creation
   </Tab>
   <Tab title="COMPLETED">
     **Onboarding successfully finished**. Card has been created and credit engagement set up.
@@ -260,7 +255,6 @@ The onboarding process progresses through the following states:
 
     - `KYC_DENIAL`: Failed KYC verification (requires manual review)
     - `CREDIT_SCORING_DENIAL`: Failed credit requirements (customer can reapply in 3 months)
-    - `UNAUTHORIZED_SIGNATORY`: Individual not authorized signatory
 
     **Additional Information**:
 
@@ -295,7 +289,7 @@ The onboarding process progresses through the following states:
 
 <warning>
   **Configuration Required**
-  Configure your webhook endpoint by reaching to your Nordiska contact person.
+  Configure your webhook by reaching to your Nordiska contact.
 </warning>
 
 ### Event Types
