@@ -4,6 +4,7 @@ description: "How to authenticate towards our API"
 ---
 
 The Nordiska Embedded API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.
+
 You can use the Nordiska Embedded API in our test environment, which doesn't affect your live data or interact with the banking networks. The base URL you use determines whether the request is made to the test or production environment.
 
 ## API Endpoints
@@ -11,7 +12,7 @@ You can use the Nordiska Embedded API in our test environment, which doesn't aff
 <Info>
   **Base URLs**
 
-  - Development: `https://card.dev.nordiska.com`
+  - Test: `https://card.dev.nordiska.com`
   - Production: `https://card.prod.nordiska.com`
 </Info>
 
@@ -29,7 +30,6 @@ Authorization: Basic <base64(uuid:)>
 Content-Type: application/json
 ```
 
-
 ```bash cURL Example
 # API-Key: 550e8400-e29b-41d4-a716-446655440000
 # Base64 encode "550e8400-e29b-41d4-a716-446655440000:" (note the colon)
@@ -39,3 +39,4 @@ curl -X POST https://card.dev.nordiska.com/api/engagements/card/onboarding \
 ```
 
 </CodeGroup>
+

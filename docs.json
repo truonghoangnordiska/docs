@@ -49,13 +49,6 @@
     "dark": "/logo/Nordiska_Logo_White.png"
   },
   "navbar": {
-    "anchors": [
-      {
-        "anchor": "API Reference",
-        "icon": "code",
-        "href": "/api-reference/introduction"
-      }
-    ],
     "links": [
       {
         "label": "Support",
