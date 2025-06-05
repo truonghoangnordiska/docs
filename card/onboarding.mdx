@@ -55,12 +55,12 @@ sequenceDiagram
 
 ## API Endpoints
 
-<info>
+<Info>
   **Base URLs**
 
-  * Development: `https://card.dev.nordiska.com`
-  * Production: `https://card.prod.nordiska.com`
-</info>
+  - Development: `https://card.dev.nordiska.com`
+  - Production: `https://card.prod.nordiska.com`
+</Info>
 
 ### Authentication
 
@@ -189,9 +189,9 @@ The onboarding process progresses through the following states:
     - KYC verification (PEP, sanction lists)
     - Credit scoring (Schufa)
 
-    <info>
-      **Duration**: Typically 3-10 seconds
-    </info>
+    <Info>
+      **Duration**: Typically 3-10 seconds.
+    </Info>
   </Tab>
   <Tab title="AWAITING_SIGNING">
     **Application approved** and waiting for customer to sign the agreement.
@@ -256,8 +256,6 @@ The onboarding process progresses through the following states:
     - `KYC_DENIAL`: Failed KYC verification (requires manual review)
     - `CREDIT_SCORING_DENIAL`: Failed credit requirements (customer can reapply in 3 months)
 
-    **Additional Information**:
-
     ```json
     {
       "rejectReason": "KYC_DENIAL"
@@ -275,8 +273,6 @@ The onboarding process progresses through the following states:
     - `ID_VERIFICATION_FAILED`: Identity verification failed
     - `TIMEOUT`: Process timeout
 
-    **Additional Information**:
-
     ```json
     {
       "failureCode": "ADDRESS_MISMATCH"
@@ -287,10 +283,10 @@ The onboarding process progresses through the following states:
 
 ## Webhook Events
 
-<warning>
+<Warning>
   **Configuration Required**
   Configure your webhook by reaching to your Nordiska contact.
-</warning>
+</Warning>
 
 ### Event Types
 
@@ -352,14 +348,14 @@ The onboarding process progresses through the following states:
 
 ### Money Format
 
-<info>
+<Info>
   All monetary amounts follow **ISO 4217** currency standards using the "minor unit" format:
 
-  * **EUR 50.00** = `{"currency": "EUR", "amount": 5000, "unit": "MINOR"}`
-  * **SEK 450.00** = `{"currency": "SEK", "amount": 45000, "unit": "MINOR"}`
+  - **EUR 50.00** = `{"currency": "EUR", "amount": 5000, "unit": "MINOR"}`
+  - **SEK 450.00** = `{"currency": "SEK", "amount": 45000, "unit": "MINOR"}`
 
   This ensures consistent currency handling across all API operations.
-</info>
+</Info>
 
 ## Error Handling
 
@@ -386,9 +382,9 @@ The onboarding process progresses through the following states:
 
 ### Test Cases
 
-<info>
+<Info>
   The system supports special test cases for development by using specific names in the applicant data.
-</info>
+</Info>
 
 <Tabs>
   <Tab title="KYC Denial">
