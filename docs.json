@@ -33,7 +33,7 @@
           {
             "group": "Introduction",
             "pages": [
-              "authentication"
+              "api-reference/authentication"
             ]
           },
           {
