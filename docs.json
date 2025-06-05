@@ -31,7 +31,7 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "Introduction",
+            "group": "Getting started",
             "pages": [
               "api-reference/introduction"
             ]
