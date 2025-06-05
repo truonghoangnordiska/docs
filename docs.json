@@ -28,7 +28,7 @@
         ]
       },
       {
-        "tab": "API",
+        "tab": "API Reference",
         "groups": [
           {
             "group": "Introduction",
@@ -37,7 +37,7 @@
             ]
           },
           {
-            "group": "API Reference",
+            "group": "API",
             "openapi": "https://partner-card.test.public.rockerapi.dev/docs/docs.yaml"
           }
         ]
