@@ -23,6 +23,12 @@
             "pages": [
               "card/onboarding"
             ]
+          },
+          {
+            "group": "Invoice",
+            "pages": [
+              "invoice/introduction"
+            ]
           }
         ]
       },

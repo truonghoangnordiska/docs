@@ -1,0 +1,157 @@
+---
+title: "Invoicing API"
+description: "Manage invoices for card engagements"
+---
+
+The Invoicing API allows you to retrieve invoice information for card engagements. All invoicing endpoints use the same authentication method as the main Nordiska Embedded API.
+
+## Getting an Engagement ID
+
+To use the invoicing endpoints, you'll need an `engagementId` which is returned from the existing onboarding endpoint:
+
+<CodeGroup>
+
+```http Get Engagement ID
+GET /api/engagements/card/onboarding/{onboardingId}
+Authorization: Basic <base64(uuid:)>
+Content-Type: application/json
+```
+
+```json Response - additionalInformation
+{
+  "additionalInformation": {
+    "engagementId": "b435ba41-f2ca-4bbe-a294-f74413412cfe"
+  }
+}
+```
+
+</CodeGroup>
+
+## Endpoints
+
+### Fetch All Invoices
+
+Retrieve all invoices associated with an engagement, sorted by creation date (most recent first).
+
+<CodeGroup>
+
+```http Request
+GET /api/engagements/{engagementId}/cards/invoices
+Authorization: Basic <base64(uuid:)>
+Content-Type: application/json
+```
+
+```json Response Example
+{
+  "invoices": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "invoiceNumber": 1,
+      "engagementId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "dueDate": "2025-05-16T09:34:56.324Z",
+      "status": "PENDING",
+      "paymentReference": "string",
+      "payeeAccountIdentifier": "DE89370400440532013000",
+      "billingPeriodStart": "2025-04-01",
+      "billingPeriodEnd": "2025-05-01",
+      "totalAmount": {
+        "amount": 50000,
+        "currency": "EUR",
+        "unit": "MINOR"
+      },
+      "minimumAmount": {
+        "amount": 50000,
+        "currency": "EUR",
+        "unit": "MINOR"
+      },
+      "attachments": [
+        {
+          "documentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
+      ],
+      "createdDate": "2025-05-16T09:34:56.324Z"
+    }
+  ]
+}
+```
+
+</CodeGroup>
+
+<Info>
+  **Invoice Status Values**
+  
+  - `PENDING` - Invoice is awaiting payment
+  - `FULLY_PAID` - Invoice has been paid in full
+  - `MINIMUM_PAID` - Minimum payment has been made
+  - `OVERDUE` - Invoice is past due date
+  - `COLLECTION` - Invoice is in collection process
+</Info>
+
+### Fetch Specific Invoice
+
+Retrieve details for a specific invoice using the `invoiceId` obtained from the list endpoint.
+
+<CodeGroup>
+
+```http Request
+GET /api/engagements/{engagementId}/cards/invoices/{invoiceId}
+Authorization: Basic <base64(uuid:)>
+Content-Type: application/json
+```
+
+```json Response Example
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "invoiceNumber": 1,
+  "engagementId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "dueDate": "2025-05-16T09:34:56.324Z",
+  "status": "PENDING",
+  "paymentReference": "string",
+  "payeeAccountIdentifier": "DE89370400440532013000",
+  "billingPeriodStart": "2025-04-01",
+  "billingPeriodEnd": "2025-05-01",
+  "totalAmount": {
+    "amount": 50000,
+    "currency": "EUR",
+    "unit": "MINOR"
+  },
+  "minimumAmount": {
+    "amount": 50000,
+    "currency": "EUR",
+    "unit": "MINOR"
+  },
+  "attachments": [
+    {
+      "documentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  ],
+  "createdDate": "2025-05-16T09:34:56.324Z"
+}
+```
+
+</CodeGroup>
+
+### Fetch Invoice Document
+
+Download a document attached to an invoice using the `documentId` from the invoice's attachments.
+
+<CodeGroup>
+
+```http Request
+GET /api/documents/{documentId}/
+Authorization: Basic <base64(uuid:)>
+```
+
+```bash cURL Example
+curl -X GET https://card.dev.nordiska.com/api/documents/3fa85f64-5717-4562-b3fc-2c963f66afa6/ \
+  -H "Authorization: Basic NTUwZTg0MDAtZTI5Yi00MWQ0LWE3MTYtNDQ2NjU1NDQwMDAwOg==" \
+  --output invoice-document.pdf
+```
+
+</CodeGroup>
+
+<Info>
+  **Response Format**
+  
+  The document endpoint returns binary data with media type `application/octet-stream`. The specific file type depends on the document format (PDF, image, etc.).
+</Info> 
