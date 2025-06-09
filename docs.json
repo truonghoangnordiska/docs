@@ -21,12 +21,7 @@
           {
             "group": "Card",
             "pages": [
-              "card/onboarding"
-            ]
-          },
-          {
-            "group": "Invoice",
-            "pages": [
+              "card/onboarding",
               "invoice/introduction"
             ]
           }
