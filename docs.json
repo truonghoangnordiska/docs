@@ -22,7 +22,8 @@
             "group": "Card",
             "pages": [
               "card/onboarding",
-              "invoice/introduction"
+              "invoice/introduction",
+              "sepa/introduction"
             ]
           }
         ]
