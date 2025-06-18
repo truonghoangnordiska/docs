@@ -52,8 +52,6 @@ sequenceDiagram
 
 Before you can register a mandate, you must display the necessary legal texts to your customer. You can retrieve these texts from our API. The response will also contain a `consentId` that you will need in the next step.
 
-**[View full API reference →](https://docs.nordiska.com/api-reference/sepa/get-sepa-direct-debit-consent-texts)**
-
 ### 2. Register a Mandate
 
 Once the customer has agreed to the terms and provided their IBAN, you can register the mandate. You'll need their `iban` and the `consentId` from the previous step. A successful registration will return a `mandateId`.

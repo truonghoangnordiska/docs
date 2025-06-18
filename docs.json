@@ -14,16 +14,23 @@
         "groups": [
           {
             "group": "Getting started",
-            "pages": [
-              "introduction"
-            ]
+            "pages": ["introduction"]
           },
           {
             "group": "Card",
             "pages": [
               "card/onboarding",
-              "invoice/introduction",
-              "sepa/introduction"
+              {
+                "group": "Invoice",
+                "pages": [
+                  "invoice/introduction",
+                  "sepa/introduction",
+                  {
+                    "title": "SEPA API Reference",
+                    "url": "https://docs.nordiska.com/api-reference/sepa/get-sepa-direct-debit-consent-texts"
+                  }
+                ]
+              }
             ]
           }
         ]
@@ -33,9 +40,7 @@
         "groups": [
           {
             "group": "Getting started",
-            "pages": [
-              "api-reference/introduction"
-            ]
+            "pages": ["api-reference/introduction"]
           },
           {
             "group": "API",
