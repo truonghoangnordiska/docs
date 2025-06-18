@@ -24,11 +24,7 @@
                 "group": "Invoice",
                 "pages": [
                   "invoice/introduction",
-                  "sepa/introduction",
-                  {
-                    "title": "SEPA API Reference",
-                    "url": "https://docs.nordiska.com/api-reference/sepa/get-sepa-direct-debit-consent-texts"
-                  }
+                  "sepa/introduction"
                 ]
               }
             ]
