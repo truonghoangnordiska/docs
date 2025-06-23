@@ -1,417 +1,169 @@
 ---
-title: "Onboarding guide"
-description: "Complete technical integration guide for partners implementing card onboarding with the Nordiska Card Service API"
+title: "Card Onboarding Process"
+description: "Understanding the credit card application and onboarding journey"
 ---
 
-# Onboarding
+# Card Onboarding Process
 
-This document provides technical integration guidance for partners implementing card onboarding with the Nordiska Card Service API.
+Credit card onboarding is the process through which your customers apply for and receive their credit cards. This involves comprehensive checks and assessments to ensure responsible lending while maintaining a smooth user experience.
 
-## Overview
+## What is Card Onboarding?
 
-The card onboarding process enables your customers to apply for and receive credit, debit, or prepaid cards. The system handles:
+Card onboarding encompasses the entire journey from application to card activation:
 
-- **Identity Verification**: KYC checks, PEP/sanction screening
-- **Credit Assessment**: Credit scoring and limit determination
-- **Document Signing**: Digital signing of credit agreements
-- **Card Creation**: Issuing cards
+1. **Application Submission** - Customer provides personal and financial information
+2. **Verification & Assessment** - Automated checks and credit evaluation
+3. **Agreement Signing** - Digital signing of terms and conditions
+4. **Card Issuance** - Physical or virtual card creation
+5. **Activation** - Card ready for use
 
-## Integration Flow
-
-### High-Level Process
+## The Onboarding Journey
 
 ```mermaid
-sequenceDiagram
-    participant Customer
-    participant Partner
-    participant CardService
-    participant SigningService
-    participant Enfuce
-
-    Customer->>Partner: 1. Initiate card application
-    Partner->>CardService: 2. POST /api/engagements/card/onboarding
-    Note over CardService: Status: PROCESSING
-    CardService->>CardService: 3. KYC, Credit checks
-    
-    alt Application Approved
-        CardService->>Partner: 4. Webhook: SIGNING_SESSION_CREATED
-        Note over CardService: Status: AWAITING_SIGNING
-        Partner->>Customer: 5. Redirect to signing URL
-        Customer->>SigningService: 6. Complete signing
-        CardService->>Partner: 7. Webhook: SIGNING_SESSION_COMPLETED
-        Note over CardService: Status: AWAITING_CARD_CREATION
-        Partner->>Enfuce: 8. Create customer/account/card
-        Enfuce->>CardService: 9. Notify card created
-        CardService->>Partner: 10. Webhook: ONBOARDING_COMPLETED
-        Note over CardService: Status: COMPLETED
-    else Application Rejected
-        CardService->>Partner: Webhook: ONBOARDING_REJECTED
-        Note over CardService: Status: REJECTED
-    else Application Failed
-        CardService->>Partner: Webhook: ONBOARDING_FAILED
-        Note over CardService: Status: FAILED
-    end
+graph LR
+    A["Customer Application"] --> B["Identity Verification"]
+    B --> C["Credit Assessment"]
+    C --> D["Risk Evaluation"]
+    D --> E{Decision}
+    E -->|Approved| F["Document Signing"]
+    E -->|Rejected| G["Rejection Notice"]
+    F --> H["Card Creation"]
+    H --> I["Card Delivery"]
+    I --> J["Activation"]
 ```
 
-### Core Endpoints
+## Key Processes
 
-#### 1. Initiate Onboarding
+### Identity Verification (KYC)
 
-<CodeGroup>
+Know Your Customer (KYC) procedures ensure we're onboarding legitimate customers:
 
-```http Request
-POST /api/engagements/card/onboarding
-Content-Type: application/json
-Authorization: Basic <base64(uuid:)>
-```
+- **Document Verification**: Validation of government-issued IDs
+- **PEP Screening**: Checks against Politically Exposed Persons lists
+- **Sanctions Screening**: Verification against international sanctions lists
+- **Address Verification**: Confirmation of residential address
+- **Duplicate Detection**: Preventing multiple applications from same individual
 
+<Info>
+KYC checks typically complete within seconds using automated systems, ensuring a frictionless experience for legitimate customers.
+</Info>
 
-```json Request Body
-{
-  "cardType": "CREDIT",
-  "applicant": {
-    "type": "INDIVIDUAL",
-    "nationality": "DE",
-    "salutation": "HERR",
-    "firstName": "Hans",
-    "lastName": "Müller",
-    "phone": "+491701234567",
-    "email": "hans.mueller@example.com",
-    "dateOfBirth": "1985-07-15",
-    "placeOfBirth": "Berlin",
-    "address": {
-      "streetLine1": "Hauptstraße 10",
-      "streetLine2": null,
-      "city": "Berlin",
-      "postalCode": "10115",
-      "country": "DE"
-    },
-    "employmentType": "PERMANENT",
-    "civilStatus": "MARRIED",
-    "monthlyIncome": {
-      "currency": "EUR",
-      "amount": 350000,
-      "unit": "MINOR"
-    },
-    "housing": "OWNER",
-    "locale": "de"
-  },
-  "redirectUrls": {
-    "successUrl": "https://your-app.com/onboarding/success",
-    "failUrl": "https://your-app.com/onboarding/fail"
-  }
-}
-```
+### Credit Assessment
 
+For credit card applications, we perform comprehensive creditworthiness evaluation:
 
-```json Response
-{
-  "id": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "status": "PROCESSING",
-  "createdAt": "2024-01-15T10:30:00Z"
-}
-```
-
-</CodeGroup>
-
-#### 2. Get Onboarding Status
-
-<CodeGroup>
-
-```http Request
-GET /api/engagements/card/onboarding/{onboarding-id}
-Authorization: Basic <base64(uuid:)>
-```
-
-
-```json Response
-{
-  "id": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "status": "AWAITING_SIGNING",
-  "cardType": "CREDIT",
-  "applicant": { /* applicant data */ },
-  "additionalInformation": {
-    "signingUrl": "https://sign.dev.nordiska.com/?sessionId=abc123"
-  },
-  "createdAt": "2024-01-15T10:30:00Z",
-  "updatedAt": "2024-01-15T10:35:00Z"
-}
-```
-
-</CodeGroup>
-
-## Onboarding States
-
-![State Flow Pn](/images/state-flow.png)
-
-The onboarding process progresses through the following states:
-
-<Tabs>
-  <Tab title="PROCESSING">
-    **Initial state** when the onboarding request is being processed.
-
-    **System Actions**:
-
-    - Application validation
-    - Invoice payment history checks
-    - KYC verification (PEP, sanction lists)
-    - Credit scoring (Schufa)
-
-    <Info>
-      **Duration**: Typically 3-10 seconds.
-    </Info>
-  </Tab>
-  <Tab title="AWAITING_SIGNING">
-    **Application approved** and waiting for customer to sign the agreement.
-
-    ```json
-    {
-      "signingUrl": "https://sign.dev.nordiska.com/?sessionId=abc123"
-    }
-    ```
-
-    **Partner Actions**:
-
-    - Redirect customer to the provided signing URL
-    - Monitor for `SIGNING_SESSION_COMPLETED` webhook
-  </Tab>
-  <Tab title="AWAITING_CARD_CREATION">
-    **Documents signed** and waiting for card creation in Enfuce.
-
-    ```json
-    {
-      "creditAssessment": {
-        "approvedLimit": {
-          "currency": "EUR",
-          "amount": 5000,
-          "unit": "MINOR"
-        },
-        "approvedAt": "2024-01-15T10:35:00Z",
-        "validUntil": "2024-02-14T10:35:00Z"
-      }
-    }
-    ```
-
-    **Partner Actions**:
-
-    - Create customer in Enfuce
-    - Create account in Enfuce
-    - Create physical card in Enfuce
-  </Tab>
-  <Tab title="COMPLETED">
-    **Onboarding successfully finished**. Card has been created and credit engagement set up.
-
-    ```json
-    {
-      "creditAssessment": {
-        "approvedLimit": {
-          "currency": "EUR",
-          "amount": 5000,
-          "unit": "MINOR"
-        },
-        "approvedAt": "2024-01-15T10:35:00Z",
-        "validUntil": "2024-02-14T10:35:00Z"
-      },
-      "engagementId": "8b9fd836-9d01-4c91-b0e0-17dfc26944e9"
-    }
-    ```
-  </Tab>
-  <Tab title="REJECTED">
-    **Application rejected** due to failed checks.
-
-    **Rejection Reasons**:
-
-    - `KYC_DENIAL`: Failed KYC verification (requires manual review)
-    - `CREDIT_SCORING_DENIAL`: Failed credit requirements (customer can reapply in 3 months)
-
-    ```json
-    {
-      "rejectReason": "KYC_DENIAL"
-    }
-    ```
-  </Tab>
-  <Tab title="FAILED">
-    **Unexpected error** occurred during processing.
-
-    **Failure Codes**:
-
-    - `INTERNAL_ERROR`: System error requiring investigation
-    - `ADDRESS_MISMATCH`: Address doesn't match official records
-    - `NAME_MISMATCH`: Name doesn't match official records
-    - `ID_VERIFICATION_FAILED`: Identity verification failed
-    - `TIMEOUT`: Process timeout
-
-    ```json
-    {
-      "failureCode": "ADDRESS_MISMATCH"
-    }
-    ```
-  </Tab>
-  <Tab title="Tab">
-    
-  </Tab>
-</Tabs>
-
-## Webhook Events
+- **Credit Bureau Checks**: Integration with Schufa (Germany) and UC (Sweden)
+- **Income Verification**: Assessment of stated monthly income
+- **Debt-to-Income Ratio**: Calculation of existing financial obligations
+- **Payment History**: Review of previous payment behavior with Nordiska
+- **Risk Scoring**: Proprietary algorithms for credit limit determination
 
 <Warning>
-  **Configuration Required**
-  Configure your webhook by reaching to your Nordiska contact.
+Credit assessments are binding for 30 days. Customers who are rejected due to credit scoring can reapply after 3 months.
 </Warning>
 
-### Event Types
+### Document Signing
 
-<CodeGroup>
+Once approved, customers must digitally sign:
 
-```json SIGNING_SESSION_CREATED
-{
-  "eventType": "SIGNING_SESSION_CREATED",
-  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "signingSessionId": "1fa6ef79-16e7-4665-ae78-c885e65e372b",
-  "signingUrl": "https://sign.dev.nordiska.com/?sessionId=1fa6ef79-16e7-4665-ae78-c885e65e372b"
-}
-```
+- **Credit Agreement**: Terms and conditions for the credit facility
+- **SECCI**: Standard European Consumer Credit Information
+- **Privacy Policy**: Data processing agreements
+- **Fee Schedule**: Transparent pricing information
 
+The signing process is:
+- **Legally Binding**: Using qualified electronic signatures
+- **Multi-lingual**: Available in German, Swedish, and English
+- **Mobile-Optimized**: Works seamlessly on all devices
+- **Secure**: Bank-grade encryption and authentication
 
-```json SIGNING_SESSION_COMPLETED
-{
-  "eventType": "SIGNING_SESSION_COMPLETED",
-  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "signingSessionId": "1fa6ef79-16e7-4665-ae78-c885e65e372b"
-}
-```
+### Risk Management
 
+Throughout the onboarding process, we employ multiple risk controls:
 
-```json ONBOARDING_COMPLETED
-{
-  "eventType": "ONBOARDING_COMPLETED",
-  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55"
-}
-```
+<CardGroup cols={2}>
+  <Card title="Fraud Detection" icon="shield-halved">
+    Real-time analysis of application patterns and behavioral signals to prevent identity theft
+  </Card>
+  <Card title="AML Compliance" icon="flag">
+    Anti-Money Laundering checks including source of funds verification for high-value applications
+  </Card>
+  <Card title="Regulatory Compliance" icon="scale-balanced">
+    Adherence to PSD2, GDPR, and local financial regulations in all markets
+  </Card>
+  <Card title="Credit Policy" icon="clipboard-check">
+    Consistent application of lending criteria to ensure responsible credit extension
+  </Card>
+</CardGroup>
 
+## Application Requirements
 
-```json ONBOARDING_REJECTED
-{
-  "eventType": "ONBOARDING_REJECTED",
-  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "rejectReason": "KYC_DENIAL"
-}
-```
+### Individual Applicants
 
+**Basic Requirements:**
+- Minimum age: 18 years
+- EU/EEA residency
+- Valid identification document
+- Regular income source
+- Active email and phone number
 
-```json ONBOARDING_FAILED
-{
-  "eventType": "ONBOARDING_FAILED",
-  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "failureCode": "INTERNAL_ERROR"
-}
-```
+**Information Collected:**
+- Personal details (name, date of birth, nationality)
+- Contact information (address, phone, email)
+- Employment status and income
+- Housing situation (owner/tenant)
+- Existing financial obligations
 
-</CodeGroup>
+### Data Security
 
-### Event Descriptions
+All customer data during onboarding is:
+- **Encrypted**: End-to-end encryption for all transmissions
+- **Tokenized**: Sensitive data replaced with secure tokens
+- **Isolated**: Separated storage for different data types
+- **Audited**: Complete audit trail of all access and changes
+- **Retained**: According to regulatory requirements only
 
-- **SIGNING_SESSION_CREATED**: Triggered when a signing session is created for approved applications
-- **SIGNING_SESSION_COMPLETED**: Triggered when customer completes the signing process
-- **ONBOARDING_COMPLETED**: Triggered when the entire onboarding process is finished
-- **ONBOARDING_REJECTED**: Triggered when the application is rejected
-- **ONBOARDING_FAILED**: Triggered when an error occurs during processing
+## Onboarding Outcomes
 
-### Money Format
+### Successful Applications
 
-<Info>
-  All monetary amounts follow **ISO 4217** currency standards using the "minor unit" format:
+When approved, customers receive:
+- **Credit Limit**: Based on creditworthiness assessment
+- **Card Details**: Virtual card immediately, physical card within 5-7 days
+- **Account Access**: Online portal and mobile app credentials
+- **Welcome Package**: Usage guidelines and benefit information
 
-  - **EUR 50.00** = `{"currency": "EUR", "amount": 5000, "unit": "MINOR"}`
-  - **SEK 450.00** = `{"currency": "SEK", "amount": 45000, "unit": "MINOR"}`
+### Rejected Applications
 
-  This ensures consistent currency handling across all API operations.
-</Info>
-
-## Error Handling
-
-### HTTP Status Codes
-
-| Status | Description                                   |
-| ------ | --------------------------------------------- |
-| 200    | Success                                       |
-| 400    | Bad Request (validation errors)               |
-| 401    | Unauthorized (invalid UUID or authentication) |
-| 404    | Not Found (onboarding not found)              |
-| 500    | Internal Server Error                         |
-
-### Error Response Format
-
-```json
-{
-    "code": "INTERNAL_ERROR",
-    "message": "Message"
-}
-```
-
-## Testing
-
-### Test Cases
+Applications may be rejected for:
+- **KYC Failures**: Unable to verify identity or sanctions hit
+- **Credit Issues**: Insufficient creditworthiness or payment history
+- **Policy Violations**: Application doesn't meet lending criteria
+- **Technical Issues**: Incomplete or inconsistent information
 
 <Info>
-  The system supports special test cases for development by using specific names in the applicant data.
+Rejected applicants receive clear communication about the rejection reason and potential next steps, maintaining transparency throughout the process.
 </Info>
 
-<Tabs>
-  <Tab title="KYC Denial">
-    ```json
-    {
-      "applicant": {
-        "firstName": "Kyc",
-        "lastName": "Denial"
-      }
-    }
-    ```
+## Best Practices for Partners
 
-    **Result**: `REJECTED` with `KYC_DENIAL`
-  </Tab>
-  <Tab title="Credit Failure">
-    ```json
-    {
-      "applicant": {
-        "firstName": "Credit", 
-        "lastName": "Fail"
-      }
-    }
-    ```
+To optimize your onboarding success rate:
 
-    **Result**: `REJECTED` with `CREDIT_SCORING_DENIAL`
-  </Tab>
-  <Tab title="Address Mismatch">
-    ```json
-    {
-      "applicant": {
-        "firstName": "Address",
-        "lastName": "Mismatch"
-      }
-    }
-    ```
+1. **Set Clear Expectations**: Communicate requirements upfront
+2. **Pre-qualify Customers**: Use soft checks to indicate eligibility
+3. **Guide the Journey**: Provide progress indicators and help text
+4. **Handle Rejections Gracefully**: Offer alternative products when possible
+5. **Follow Up**: Assist customers who abandon applications
 
-    **Result**: `FAILED` with `ADDRESS_MISMATCH`
-  </Tab>
-  <Tab title="Internal Error">
-    ```json
-    {
-      "applicant": {
-        "firstName": "Internal",
-        "lastName": "Error"
-      }
-    }
-    ```
+## Compliance Considerations
 
-    **Result**: `FAILED` with `INTERNAL_ERROR`
-  </Tab>
-</Tabs>
+The onboarding process adheres to:
+
+- **PSD2**: Strong Customer Authentication requirements
+- **GDPR**: Explicit consent and data minimization
+- **Consumer Credit Directive**: Transparent lending practices
+- **Local Regulations**: Country-specific requirements for Germany and Sweden
 
 ---
 
-## Changelog
-
-- **v1.0.0** (2024-01-15): Initial release
-- **v1.1.0** (2024-02-01): Added Swedish applicant support
-- **v1.2.0** (2024-03-01): Enhanced webhook retry mechanism
+Ready to implement? Continue to our [Integration Flow](/card/integration-flow) guide for technical implementation details.
