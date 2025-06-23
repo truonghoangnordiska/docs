@@ -429,38 +429,7 @@ For testing webhooks during development:
   </Tab>
 </Tabs>
 
-## Best Practices
 
-### Error Handling
-
-- **Always respond with HTTP 200** for successfully processed webhooks
-- **Log all webhook events** for debugging and audit trails
-- **Implement retry logic** for transient failures in your processing
-- **Use dead letter queues** for failed webhook processing
-
-### Performance
-
-- **Process webhooks asynchronously** to avoid timeout issues
-- **Keep webhook endpoints lightweight** - queue heavy processing
-- **Scale webhook endpoints** to handle traffic spikes
-- **Monitor webhook processing times**
-
-### Security
-
-- **Always verify signatures** before processing webhook data
-- **Check timestamps** to prevent replay attacks
-- **Use HTTPS** for all webhook endpoints
-- **Rotate webhook secrets** periodically
-- **Log suspicious activity** (invalid signatures, old timestamps)
-
-### Monitoring
-
-Set up alerts for:
-- Failed webhook deliveries
-- High webhook processing times
-- Invalid signature attempts
-- Missing webhook events
-- Webhook endpoint downtime
 
 ---
 
