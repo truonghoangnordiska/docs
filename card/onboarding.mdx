@@ -19,61 +19,17 @@ Card onboarding encompasses the entire journey from application to card activati
 
 ```mermaid
 graph LR
-    A["Customer Application"] --> B["Identity Verification"]
-    B --> C["Credit Assessment"]
-    C --> D["Risk Evaluation"]
-    D --> E{Decision}
-    E -->|Approved| F["Document Signing"]
-    E -->|Rejected| G["Rejection Notice"]
-    F --> H["Card Creation"]
-    H --> I["Card Delivery"]
-    I --> J["Activation"]
+    A["Customer Application"] --> B["Credit Assessment"]
+    B --> C["Risk Evaluation"]
+    C --> D{Decision}
+    D -->|Rejected| E["Rejection Notice"]
+    D -->|Approved| F["Identity Verification"]
+    F --> G["Document Signing"]
+    G --> H["Card Creation"]
+    H --> I["Completed"]
 ```
 
 ## Key Processes
-
-### Identity Verification (KYC)
-
-Know Your Customer (KYC) procedures ensure we're onboarding legitimate customers:
-
-- **Document Verification**: Validation of government-issued IDs
-- **PEP Screening**: Checks against Politically Exposed Persons lists
-- **Sanctions Screening**: Verification against international sanctions lists
-- **Address Verification**: Confirmation of residential address
-- **Duplicate Detection**: Preventing multiple applications from same individual
-
-<Info>
-KYC checks typically complete within seconds using automated systems, ensuring a frictionless experience for legitimate customers.
-</Info>
-
-### Credit Assessment
-
-For credit card applications, we perform comprehensive creditworthiness evaluation:
-
-- **Credit Bureau Checks**: Integration with Schufa (Germany) and UC (Sweden)
-- **Income Verification**: Assessment of stated monthly income
-- **Debt-to-Income Ratio**: Calculation of existing financial obligations
-- **Payment History**: Review of previous payment behavior with Nordiska
-- **Risk Scoring**: Proprietary algorithms for credit limit determination
-
-<Warning>
-Credit assessments are binding for 30 days. Customers who are rejected due to credit scoring can reapply after 3 months.
-</Warning>
-
-### Document Signing
-
-Once approved, customers must digitally sign:
-
-- **Credit Agreement**: Terms and conditions for the credit facility
-- **SECCI**: Standard European Consumer Credit Information
-- **Privacy Policy**: Data processing agreements
-- **Fee Schedule**: Transparent pricing information
-
-The signing process is:
-- **Legally Binding**: Using qualified electronic signatures
-- **Multi-lingual**: Available in German, Swedish, and English
-- **Mobile-Optimized**: Works seamlessly on all devices
-- **Secure**: Bank-grade encryption and authentication
 
 ### Risk Management
 
@@ -93,6 +49,49 @@ Throughout the onboarding process, we employ multiple risk controls:
     Consistent application of lending criteria to ensure responsible credit extension
   </Card>
 </CardGroup>
+
+### Credit Assessment
+
+For credit card applications, we perform comprehensive creditworthiness evaluation:
+
+- **Credit Bureau Checks**: Integration with Schufa (Germany)
+- **Income Verification**: Assessment of stated monthly income
+- **Debt-to-Income Ratio**: Calculation of existing financial obligations
+- **Payment History**: Review of previous payment behavior with Nordiska
+- **Risk Scoring**: Proprietary algorithms for credit limit determination
+
+<Warning>
+Credit assessments are binding for 30 days. Customers who are rejected due to credit scoring can reapply after 3 months.
+</Warning>
+
+### Identity Verification (KYC)
+
+Know Your Customer (KYC) procedures ensure we're onboarding legitimate customers:
+
+- **Document Verification**: Validation of government-issued IDs
+- **PEP Screening**: Checks against Politically Exposed Persons lists
+- **Sanctions Screening**: Verification against international sanctions lists
+- **Address Verification**: Confirmation of residential address
+- **Duplicate Detection**: Preventing multiple applications from same individual
+
+<Info>
+KYC checks typically complete within seconds using automated systems, ensuring a frictionless experience for legitimate customers.
+</Info>
+
+### Document Signing
+
+Once approved, customers must digitally sign:
+
+- **Credit Agreement**: Terms and conditions for the credit facility
+- **SECCI**: Standard European Consumer Credit Information
+- **Privacy Policy**: Data processing agreements
+- **Fee Schedule**: Transparent pricing information
+
+The signing process is:
+- **Legally Binding**: Using qualified electronic signatures
+- **Multi-lingual**: Available in German and English
+- **Mobile-Optimized**: Works seamlessly on all devices
+- **Secure**: Bank-grade encryption and authentication
 
 ## Application Requirements
 
@@ -160,7 +159,7 @@ The onboarding process adheres to:
 - **PSD2**: Strong Customer Authentication requirements
 - **GDPR**: Explicit consent and data minimization
 - **Consumer Credit Directive**: Transparent lending practices
-- **Local Regulations**: Country-specific requirements for Germany and Sweden
+- **Local Regulations**: Country-specific requirements for Germany
 
 ---
 
