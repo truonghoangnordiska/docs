@@ -19,7 +19,9 @@
           {
             "group": "Card",
             "pages": [
+              "card/introduction",
               "card/onboarding",
+              "card/integration-flow",
               {
                 "group": "Invoice",
                 "pages": [
