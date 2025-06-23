@@ -22,6 +22,7 @@
               "card/introduction",
               "card/onboarding",
               "card/integration-flow",
+              "card/webhooks",
               {
                 "group": "Invoice",
                 "pages": [

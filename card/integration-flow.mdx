@@ -173,137 +173,18 @@ The onboarding process moves through defined states, each representing a specifi
 
 ## Webhook Implementation
 
-### Configuration
+The integration relies on webhooks to notify your system of status changes in real-time. When key events occur (approval, signing completion, etc.), Nordiska sends HTTP POST requests to your configured webhook endpoint.
 
-<Warning>
-Webhook endpoints must be configured by your Nordiska integration contact before going live.
-</Warning>
+**Key webhook events**:
+- **SIGNING_SESSION_CREATED**: Application approved, customer needs to sign
+- **SIGNING_SESSION_COMPLETED**: Customer finished signing documents  
+- **ONBOARDING_COMPLETED**: Entire process completed successfully
+- **ONBOARDING_REJECTED**: Application declined during assessment
+- **ONBOARDING_FAILED**: Technical error occurred
 
-### Webhook Events
-
-Your system should handle these webhook events:
-
-#### SIGNING_SESSION_CREATED
-
-Indicates the application is approved and ready for signing.
-
-```json
-{
-  "eventType": "SIGNING_SESSION_CREATED",
-  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "signingSessionId": "1fa6ef79-16e7-4665-ae78-c885e65e372b",
-  "signingUrl": "https://sign.dev.nordiska.com/?sessionId=1fa6ef79-16e7-4665-ae78-c885e65e372b"
-}
-```
-
-**Your Actions**:
-1. Store the signing URL
-2. Redirect customer to complete signing
-3. Track abandonment for follow-up
-
-#### SIGNING_SESSION_COMPLETED
-
-Customer has successfully signed all documents.
-
-```json
-{
-  "eventType": "SIGNING_SESSION_COMPLETED",
-  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "signingSessionId": "1fa6ef79-16e7-4665-ae78-c885e65e372b"
-}
-```
-
-**Your Actions**:
-1. Update customer status
-2. Initiate Enfuce card creation
-3. Send confirmation to customer
-
-#### ONBOARDING_COMPLETED
-
-The entire onboarding process has finished successfully.
-
-```json
-{
-  "eventType": "ONBOARDING_COMPLETED",
-  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55"
-}
-```
-
-**Your Actions**:
-1. Activate customer account
-2. Send welcome communications
-3. Enable card management features
-
-#### ONBOARDING_REJECTED
-
-Application was declined during assessment.
-
-```json
-{
-  "eventType": "ONBOARDING_REJECTED",
-  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "rejectReason": "CREDIT_SCORING_DENIAL"
-}
-```
-
-**Your Actions**:
-1. Notify customer of decision
-2. Provide next steps or alternatives
-3. Log for analytics
-
-#### ONBOARDING_FAILED
-
-A technical error occurred during processing.
-
-```json
-{
-  "eventType": "ONBOARDING_FAILED",
-  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "failureCode": "ADDRESS_MISMATCH"
-}
-```
-
-**Your Actions**:
-1. Log error for investigation
-2. Notify customer if appropriate
-3. Provide support contact
-
-### Webhook Security
-
-All webhooks include:
-- **HMAC signature** for authenticity verification
-- **Timestamp** to prevent replay attacks
-- **Idempotency key** for duplicate detection
-
-<CodeGroup>
-
-```javascript Signature Verification
-const crypto = require('crypto');
-
-function verifyWebhook(payload, signature, secret) {
-  const hmac = crypto.createHmac('sha256', secret);
-  const expectedSignature = hmac.update(payload).digest('hex');
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
-  );
-}
-```
-
-```python Signature Verification
-import hmac
-import hashlib
-
-def verify_webhook(payload, signature, secret):
-    expected = hmac.new(
-        secret.encode(),
-        payload.encode(),
-        hashlib.sha256
-    ).hexdigest()
-    return hmac.compare_digest(signature, expected)
-```
-
-</CodeGroup>
+<Info>
+For complete webhook implementation details, security requirements, and code examples, see our [Webhooks Guide](/card/webhooks).
+</Info>
 
 ## Best Practices
 
