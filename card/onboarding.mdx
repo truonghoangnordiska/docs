@@ -19,8 +19,8 @@ Card onboarding encompasses the entire journey from application to card activati
 
 ```mermaid
 graph LR
-    A["Customer Application"] --> B["Credit Assessment"]
-    B --> C["Risk Evaluation"]
+    A["Customer Application"] --> B["Processing"]
+    B --> C["Credit Assessment"]
     C --> D{Decision}
     D -->|Rejected| E["Rejection Notice"]
     D -->|Approved| F["Identity Verification"]
@@ -31,9 +31,14 @@ graph LR
 
 ## Key Processes
 
-### Risk Management
+### Application Processing
 
-Throughout the onboarding process, we employ multiple risk controls:
+Initial validation and comprehensive checks including:
+
+- **Application Validation**: Verifying completeness and format of submitted data
+- **Internal Checks**: Invoice payment history, block lists, and existing customer records
+- **Know your customer (KYC)**: PEP screening, sanctions lists
+- **Credit Assessment**: Schufa integration, income verification, risk scoring
 
 <CardGroup cols={2}>
   <Card title="Fraud Detection" icon="shield-halved">
@@ -50,48 +55,35 @@ Throughout the onboarding process, we employ multiple risk controls:
   </Card>
 </CardGroup>
 
-### Credit Assessment
-
-For credit card applications, we perform comprehensive creditworthiness evaluation:
-
-- **Credit Bureau Checks**: Integration with Schufa (Germany)
-- **Income Verification**: Assessment of stated monthly income
-- **Debt-to-Income Ratio**: Calculation of existing financial obligations
-- **Payment History**: Review of previous payment behavior with Nordiska
-- **Risk Scoring**: Proprietary algorithms for credit limit determination
-
 <Warning>
 Credit assessments are binding for 30 days. Customers who are rejected due to credit scoring can reapply after 3 months.
 </Warning>
 
-### Identity Verification (KYC)
+### Identity Verification
 
-Know Your Customer (KYC) procedures ensure we're onboarding legitimate customers:
+Once credit assessment is approved, customers complete identity verification:
 
 - **Document Verification**: Validation of government-issued IDs
-- **PEP Screening**: Checks against Politically Exposed Persons lists
-- **Sanctions Screening**: Verification against international sanctions lists
-- **Address Verification**: Confirmation of residential address
-- **Duplicate Detection**: Preventing multiple applications from same individual
+- **Liveness Check**: Ensuring the person is physically present
+- **Data Matching**: Verifying information matches official records
 
 <Info>
-KYC checks typically complete within seconds using automated systems, ensuring a frictionless experience for legitimate customers.
+Identity verification typically completes within minutes using automated systems, ensuring a smooth experience for approved customers.
 </Info>
 
 ### Document Signing
 
-Once approved, customers must digitally sign:
+Once identity verification is completed, customers must digitally sign:
 
 - **Credit Agreement**: Terms and conditions for the credit facility
-- **SECCI**: Standard European Consumer Credit Information
 - **Privacy Policy**: Data processing agreements
-- **Fee Schedule**: Transparent pricing information
 
-The signing process is:
-- **Legally Binding**: Using qualified electronic signatures
+The signing process uses **Qualified Electronic Signatures (QES)** which provide:
+- **Legal Equivalence**: Same legal status as handwritten signatures under eIDAS regulation
+- **Non-repudiation**: Cryptographically ensures the signer cannot deny having signed
 - **Multi-lingual**: Available in German and English
 - **Mobile-Optimized**: Works seamlessly on all devices
-- **Secure**: Bank-grade encryption and authentication
+- **Regulatory Compliance**: Meets EU standards for financial services
 
 ## Application Requirements
 
