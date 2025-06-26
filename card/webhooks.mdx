@@ -3,36 +3,53 @@ title: "Webhooks"
 description: "Complete guide to webhook implementation for card onboarding events"
 ---
 
-Webhooks provide real-time notifications about changes in the card onboarding process. Your system will receive HTTP POST requests whenever significant events occur.
+Webhooks provide real-time notifications about changes in the card onboarding process. Your system will receive HTTP POST requests whenever significant events occur during the credit card application lifecycle.
+
+## How Webhooks Work
+
+The card service uses an event-driven architecture with guaranteed delivery and ordered processing:
+
+1. **Event Generation**: Onboarding events are generated when status changes occur
+2. **Conditional Enqueueing**: Events are only enqueued if webhook delivery is configured for the tenant
+3. **Sequential Processing**: Events are processed in order per onboarding ID using sequence numbers
+4. **Reliable Delivery**: Failed deliveries are retried with exponential backoff
+5. **Distributed Processing**: Multiple service instances coordinate using distributed locks
 
 ## Configuration
 
 <Warning>
-Webhook endpoints must be configured by your Nordiska integration contact before going live.
+Webhook endpoints must be configured by your integration contact before going live. Configuration includes the webhook URL, signing secret, and optional authentication header.
 </Warning>
 
 ### Requirements
 
 Your webhook endpoint must:
-- Accept HTTP POST requests
+- Accept HTTP POST requests with JSON payloads
 - Respond with HTTP 200 status for successful processing
-- Process requests within 30 seconds
+- Process requests within 30 seconds (configurable)
 - Be accessible over HTTPS
 - Verify webhook signatures for security
 
-### Retry Policy
+### Webhook Configuration
 
-If your endpoint doesn't respond with HTTP 200:
-- **First retry**: After 1 minute
-- **Second retry**: After 5 minutes  
-- **Third retry**: After 30 minutes
-- **Final retry**: After 2 hours
+Webhooks are configured per tenant in the system with:
+- **Webhook URL**: Your endpoint to receive notifications
+- **Signing Secret**: Used for HMAC signature verification
+- **Authentication Header**: Optional bearer token or API key
 
-After 4 failed attempts, webhook delivery stops and manual intervention may be required.
+## Retry Policy
+
+The service implements a robust retry mechanism with exponential backoff:
+
+- **Maximum Retries**: 10 attempts (configurable)
+- **Initial Delay**: 100ms
+- **Backoff Strategy**: Exponential with jitter
+
+After all retries are exhausted, the webhook event is marked as permanently failed.
 
 ## Webhook Events
 
-Your system should handle these webhook events:
+The system sends webhooks for these onboarding lifecycle events:
 
 ### SIGNING_SESSION_CREATED
 
@@ -42,23 +59,12 @@ Triggered when a credit card application is approved and ready for document sign
 {
   "eventType": "SIGNING_SESSION_CREATED",
   "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "signingSessionId": "1fa6ef79-16e7-4665-ae78-c885e65e372b",
-  "signingUrl": "https://sign.dev.nordiska.com/?sessionId=1fa6ef79-16e7-4665-ae78-c885e65e372b",
-  "timestamp": "2024-01-15T10:35:00Z"
+  "signingUrl": "https://sign.dev.nordiska.com/?sessionId=1fa6ef79-16e7-4665-ae78-c885e65e372b"
 }
 ```
 
 **Required Actions**:
-1. Store the signing URL for customer redirect
-2. Update onboarding status to `AWAITING_SIGNING`
-3. Redirect customer to complete document signing
-4. Set up abandonment tracking for follow-up
-
-**Customer Journey**:
-- Customer receives notification to complete signing
-- Redirect to Nordiska's signing service
-- Customer reviews and signs credit agreement
-- Automatic redirect back to your platform
+1. Redirect customer to complete document signing
 
 ### SIGNING_SESSION_COMPLETED
 
@@ -67,23 +73,12 @@ Triggered when a customer successfully completes document signing.
 ```json
 {
   "eventType": "SIGNING_SESSION_COMPLETED",
-  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "signingSessionId": "1fa6ef79-16e7-4665-ae78-c885e65e372b",
-  "timestamp": "2024-01-15T10:45:00Z"
+  "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55"
 }
 ```
 
 **Required Actions**:
-1. Update onboarding status to `AWAITING_CARD_CREATION`
-2. Initiate card creation process in Enfuce
-3. Send confirmation notification to customer
-4. Begin account setup procedures
-
-**Next Steps**:
-- Create customer record in Enfuce
-- Set up credit account with approved limit
-- Order physical/virtual card
-- Configure account access
+1. Initiate card creation process
 
 ### ONBOARDING_COMPLETED
 
@@ -93,23 +88,12 @@ Triggered when the entire onboarding process finishes successfully.
 {
   "eventType": "ONBOARDING_COMPLETED",
   "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "engagementId": "8b9fd836-9d01-4c91-b0e0-17dfc26944e9",
-  "timestamp": "2024-01-15T11:00:00Z"
+  "engagementId": "8b9fd836-9d01-4c91-b0e0-17dfc26944e9"
 }
 ```
 
 **Required Actions**:
-1. Update onboarding status to `COMPLETED`
-2. Activate customer's credit account
-3. Send welcome communications
-4. Enable card management features
-5. Store engagement ID for future reference
-
-**Customer Benefits**:
-- Immediate access to virtual card
-- Physical card shipping notification
-- Account dashboard access
-- Credit facility activation
+1. Store engagement ID for future reference
 
 ### ONBOARDING_REJECTED
 
@@ -119,48 +103,16 @@ Triggered when a credit card application is declined during assessment.
 {
   "eventType": "ONBOARDING_REJECTED",
   "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "rejectReason": "CREDIT_SCORING_DENIAL",
-  "timestamp": "2024-01-15T10:33:00Z"
+  "rejectReason": "CREDIT_SCORING_DENIAL"
 }
 ```
 
 **Rejection Reasons**:
 
-<Tabs>
-  <Tab title="KYC_DENIAL">
-    **Cause**: Failed identity verification or sanctions screening
-    
-    **Customer Action**:
-    - Contact customer support for manual review
-    - Provide additional documentation if requested
-    - May require in-person verification
-    
-    **Partner Action**:
-    - Explain rejection reason clearly
-    - Provide support contact information
-    - Log case for compliance tracking
-  </Tab>
-  
-  <Tab title="CREDIT_SCORING_DENIAL">
-    **Cause**: Insufficient creditworthiness based on bureau data
-    
-    **Customer Action**:
-    - Can reapply after 3 months
-    - Improve credit profile in the meantime
-    - Consider alternative products
-    
-    **Partner Action**:
-    - Communicate waiting period
-    - Suggest credit improvement tips
-    - Offer alternative financial products
-  </Tab>
-</Tabs>
-
-**Required Actions**:
-1. Update onboarding status to `REJECTED`
-2. Send appropriate rejection communication
-3. Provide clear next steps to customer
-4. Log rejection for analytics and compliance
+| Reason | Description | Customer Action |
+|--------|-------------|-----------------|
+| `KYC_DENIAL` | Failed identity verification or sanctions screening | Contact support, provide additional documentation |
+| `CREDIT_SCORING_DENIAL` | Insufficient creditworthiness based on bureau data | Can reapply after 3 months |
 
 ### ONBOARDING_FAILED
 
@@ -170,8 +122,7 @@ Triggered when a technical error occurs during the onboarding process.
 {
   "eventType": "ONBOARDING_FAILED",
   "onboardingId": "7a0d9433-4f64-4f93-919c-5ab7d81eea55",
-  "failureCode": "ADDRESS_MISMATCH",
-  "timestamp": "2024-01-15T10:31:00Z"
+  "failureCode": "ADDRESS_MISMATCH"
 }
 ```
 
@@ -185,252 +136,33 @@ Triggered when a technical error occurs during the onboarding process.
 | `ID_VERIFICATION_FAILED` | Identity verification failed | Provide additional documentation |
 | `TIMEOUT` | Process timeout occurred | Retry application |
 
-**Required Actions**:
-1. Update onboarding status to `FAILED`
-2. Log error details for investigation
-3. Notify customer if appropriate (not for internal errors)
-4. Provide resolution path when available
-
 ## Webhook Security
 
-All webhooks include security headers to verify authenticity and prevent attacks.
+All webhooks include security headers to verify authenticity and prevent replay attacks.
 
 ### Headers
 
 ```http
-X-Nordiska-Signature: sha256=a1b2c3d4e5f6...
-X-Nordiska-Timestamp: 1642234800
-X-Nordiska-Idempotency-Key: uuid-v4-here
+X-Card-Onboarding-Signature: a1b2c3d4e5f6...
+X-Card-Onboarding-Timestamp: 2024-01-15T10:35:00Z
+Authorization: Bearer your-auth-token
 Content-Type: application/json
 ```
 
 ### Signature Verification
 
-Verify the HMAC signature to ensure webhook authenticity:
+The service generates HMAC-SHA256 signatures using the format `timestamp:payload`:
 
-<CodeGroup>
+## Event Ordering and Idempotency
 
-```javascript Node.js
-const crypto = require('crypto');
+### Sequential Processing
 
-function verifyWebhook(payload, signature, secret, timestamp) {
-  // Check timestamp (reject if older than 5 minutes)
-  const currentTime = Math.floor(Date.now() / 1000);
-  if (Math.abs(currentTime - timestamp) > 300) {
-    throw new Error('Webhook timestamp too old');
-  }
-  
-  // Verify signature
-  const signedPayload = `${timestamp}.${payload}`;
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(signedPayload)
-    .digest('hex');
-  
-  const receivedSignature = signature.replace('sha256=', '');
-  
-  return crypto.timingSafeEqual(
-    Buffer.from(expectedSignature),
-    Buffer.from(receivedSignature)
-  );
-}
+The service guarantees that webhook events are delivered in the correct order per onboarding ID using:
 
-// Usage in Express.js
-app.post('/webhooks/nordiska', express.raw({type: 'application/json'}), (req, res) => {
-  const signature = req.headers['x-nordiska-signature'];
-  const timestamp = req.headers['x-nordiska-timestamp'];
-  const payload = req.body.toString();
-  
-  try {
-    if (!verifyWebhook(payload, signature, process.env.WEBHOOK_SECRET, timestamp)) {
-      return res.status(401).send('Invalid signature');
-    }
-    
-    const event = JSON.parse(payload);
-    // Process webhook event
-    handleWebhookEvent(event);
-    
-    res.status(200).send('OK');
-  } catch (error) {
-    console.error('Webhook error:', error);
-    res.status(400).send('Error processing webhook');
-  }
-});
-```
-
-```python Python
-import hmac
-import hashlib
-import time
-import json
-
-def verify_webhook(payload: str, signature: str, secret: str, timestamp: int) -> bool:
-    # Check timestamp (reject if older than 5 minutes)
-    current_time = int(time.time())
-    if abs(current_time - timestamp) > 300:
-        raise ValueError("Webhook timestamp too old")
-    
-    # Verify signature
-    signed_payload = f"{timestamp}.{payload}"
-    expected_signature = hmac.new(
-        secret.encode(),
-        signed_payload.encode(),
-        hashlib.sha256
-    ).hexdigest()
-    
-    received_signature = signature.replace('sha256=', '')
-    
-    return hmac.compare_digest(expected_signature, received_signature)
-
-# Usage in Flask
-from flask import Flask, request
-
-@app.route('/webhooks/nordiska', methods=['POST'])
-def handle_webhook():
-    signature = request.headers.get('X-Nordiska-Signature')
-    timestamp = int(request.headers.get('X-Nordiska-Timestamp'))
-    payload = request.get_data(as_text=True)
-    
-    try:
-        if not verify_webhook(payload, signature, WEBHOOK_SECRET, timestamp):
-            return 'Invalid signature', 401
-        
-        event = json.loads(payload)
-        # Process webhook event
-        handle_webhook_event(event)
-        
-        return 'OK', 200
-    except Exception as error:
-        print(f'Webhook error: {error}')
-        return 'Error processing webhook', 400
-```
-
-```java Java
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.MessageDigest;
-import java.time.Instant;
-
-public class WebhookVerifier {
-    
-    public static boolean verifyWebhook(String payload, String signature, 
-                                       String secret, long timestamp) {
-        // Check timestamp (reject if older than 5 minutes)
-        long currentTime = Instant.now().getEpochSecond();
-        if (Math.abs(currentTime - timestamp) > 300) {
-            throw new IllegalArgumentException("Webhook timestamp too old");
-        }
-        
-        try {
-            // Verify signature
-            String signedPayload = timestamp + "." + payload;
-            Mac mac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
-            mac.init(secretKey);
-            
-            byte[] hash = mac.doFinal(signedPayload.getBytes());
-            String expectedSignature = bytesToHex(hash);
-            String receivedSignature = signature.replace("sha256=", "");
-            
-            return MessageDigest.isEqual(
-                expectedSignature.getBytes(), 
-                receivedSignature.getBytes()
-            );
-        } catch (Exception e) {
-            throw new RuntimeException("Error verifying webhook signature", e);
-        }
-    }
-    
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder result = new StringBuilder();
-        for (byte b : bytes) {
-            result.append(String.format("%02x", b));
-        }
-        return result.toString();
-    }
-}
-```
-
-</CodeGroup>
-
-### Idempotency
-
-Use the `X-Nordiska-Idempotency-Key` header to prevent duplicate processing:
-
-```javascript
-const processedWebhooks = new Set();
-
-function handleWebhook(event, idempotencyKey) {
-  if (processedWebhooks.has(idempotencyKey)) {
-    console.log('Duplicate webhook ignored');
-    return;
-  }
-  
-  // Process the webhook
-  processWebhookEvent(event);
-  
-  // Mark as processed
-  processedWebhooks.add(idempotencyKey);
-}
-```
-
-## Testing Webhooks
-
-### Development Environment
-
-For testing webhooks during development:
-
-1. **Use ngrok or similar service** to expose your local server
-   ```bash
-   ngrok http 3000
-   ```
-
-2. **Configure test webhook URL** with your Nordiska contact
-   ```
-   https://abc123.ngrok.io/webhooks/nordiska
-   ```
-
-3. **Test with special names** in applications to trigger specific events
-
-### Testing Tools
-
-<Tabs>
-  <Tab title="Webhook.site">
-    - Visit [webhook.site](https://webhook.site)
-    - Get a unique URL for testing
-    - View incoming webhook payloads
-    - Test signature verification
-  </Tab>
-  
-  <Tab title="Postman">
-    - Create mock webhook endpoints
-    - Test signature verification logic
-    - Simulate different event types
-    - Test error handling
-  </Tab>
-  
-  <Tab title="Custom Test Server">
-    ```javascript
-    const express = require('express');
-    const app = express();
-    
-    app.use(express.raw({type: 'application/json'}));
-    
-    app.post('/webhooks/test', (req, res) => {
-      console.log('Headers:', req.headers);
-      console.log('Body:', req.body.toString());
-      res.status(200).send('OK');
-    });
-    
-    app.listen(3000, () => {
-      console.log('Test webhook server running on port 3000');
-    });
-    ```
-  </Tab>
-</Tabs>
-
-
+- **Sequence Numbers**: Each event gets an incrementing sequence number
+- **Ordered Delivery**: Events are processed in sequence number order
+- **Blocking**: If an earlier event fails, later events are blocked until retry succeeds
 
 ---
 
-Need help with webhook implementation? Contact your Nordiska integration specialist for technical support. 
+Need help with webhook implementation? Contact your integration specialist for technical support and configuration assistance.
