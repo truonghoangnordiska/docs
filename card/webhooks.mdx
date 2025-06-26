@@ -7,27 +7,28 @@ Webhooks provide real-time notifications about changes in the card onboarding pr
 
 ## How Webhooks Work
 
-The card service uses an event-driven architecture with guaranteed delivery and ordered processing:
+We guarantee delivery and ordered processing:
 
 1. **Event Generation**: Onboarding events are generated when status changes occur
 2. **Conditional Enqueueing**: Events are only enqueued if webhook delivery is configured for the tenant
 3. **Sequential Processing**: Events are processed in order per onboarding ID using sequence numbers
 4. **Reliable Delivery**: Failed deliveries are retried with exponential backoff
-5. **Distributed Processing**: Multiple service instances coordinate using distributed locks
 
 ## Configuration
 
 <Warning>
-Webhook endpoints must be configured by your integration contact before going live. Configuration includes the webhook URL, signing secret, and optional authentication header.
+Webhook endpoints must be configured by your integration contact person before going live. Configuration includes the webhook URL, signing secret, and optional authentication header.
 </Warning>
 
 ### Requirements
 
 Your webhook endpoint must:
 - Accept HTTP POST requests with JSON payloads
-- Respond with HTTP 200 status for successful processing
+- Respond with HTTP 2XX status for successful processing
 - Process requests within 30 seconds (configurable)
 - Be accessible over HTTPS
+
+Optional:
 - Verify webhook signatures for security
 
 ### Webhook Configuration
