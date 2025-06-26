@@ -20,15 +20,17 @@
             "group": "Card",
             "pages": [
               "card/introduction",
-              "card/onboarding",
-              "card/integration-flow",
-              "card/webhooks",
+              {
+                "group": "Onboarding",
+                "pages": [
+                  "card/onboarding-individuals",
+                  "card/integration-flow",
+                  "card/webhooks"
+                ]
+              },
               {
                 "group": "Invoice",
-                "pages": [
-                  "invoice/introduction",
-                  "sepa/introduction"
-                ]
+                "pages": ["invoice/introduction", "sepa/introduction"]
               }
             ]
           }
