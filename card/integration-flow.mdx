@@ -153,8 +153,14 @@ The onboarding process moves through defined states, each representing a specifi
     - CREDIT_SCORING_DENIAL
     
     **Customer Action**:
-    - KYC issues: Contact support
-    - Credit issues: Reapply after 3 months
+    - KYC issues: Our AML team will handle these manually and after review, the user can start new onboarding
+    - Credit issues: Recommend that you let the customer reapply after 3 months with new onboarding
+    
+    <Warning>
+    For both KYC and credit scoring denials, the current onboarding remains permanently in REJECTED status. Customers must initiate a completely new onboarding process with a new onboarding ID:
+    - **KYC denials**: After AML team review and approval
+    - **Credit denials**: After 3-month waiting period
+    </Warning>
   </Step>
   
   <Step title="FAILED">
