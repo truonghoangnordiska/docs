@@ -1,0 +1,44 @@
+---
+title: Error Responses                                                                                                                                      │
+---                                                                                                                                                         │
+                                                                                                                                                            │
+## Error Response Model                                                                                                                                     │
+                                                                                                                                                            │
+When an API request…                                                                                                                                        │
+                                                                                                                                                            │
+Error: Command is not allowed: echo -- '---                                                                                                                 │
+title: Error Responses                                                                                                                                      │
+---                                                                                                                                                         │
+                                                                                                                                                            │
+## Error Response Model                                                                                                                                     │
+                                                                                                                                                            │
+When an API request results in an error, the server will respond with an appropriate HTTP status code and, in most cases, a JSON body providing more        │
+details.                                                                                                                                                    │
+                                                                                                                                                            │
+### Structure                                                                                                                                               │
+                                                                                                                                                            │
+The error response body, when present, follows this structure:                                                                                              │
+                                                                                                                                                            │
+```json                                                                                                                                                     │
+{                                                                                                                                                           │
+  "code": "A machine-readable error code",                                                                                                                  │
+  "message": "A human-readable description of the error."                                                                                                   │
+}                                                                                                                                                           │
+```                                                                                                                                                         │
+                                                                                                                                                            │
+### Fields                                                                                                                                                  │
+                                                                                                                                                            │
+- `code` (string): A machine-readable code that identifies the specific error. This can be used to programmatically handle different error cases.           │
+- `message` (string): A human-readable message providing details about the error. This is primarily for debugging and should not be displayed directly to   │
+the end-user.                                                                                                                                               │
+                                                                                                                                                            │
+### Common HTTP Status Codes                                                                                                                                │
+                                                                                                                                                            │
+The API uses standard HTTP status codes to indicate request success or failure. Common error codes include:                                                 │
+                                                                                                                                                            │
+- **`400 Bad Request`**: The request is malformed or contains invalid parameters.                                                                           │
+- **`401 Unauthorized`**: Authentication is required and has failed or has not been provided.                                                               │
+- **`403 Forbidden`**: The authenticated user does not have permission to perform the requested action.                                                     │
+- **`404 Not Found`**: The requested resource could not be found.                                                                                           │
+- **`409 Conflict`**: The request could not be completed due to a conflict with the current state of the resource.                                          │
+- **`500 Internal Server Error`**: An unexpected error occurred on the server.
