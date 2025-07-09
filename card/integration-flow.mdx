@@ -50,14 +50,19 @@ Your customer submits their card application through your interface. Collect all
 
 ### Step 2: Submit to Card Service
 
-Make a POST request to `/api/engagements/card/onboarding` with the applicant's information. The service immediately returns an onboarding ID and begins processing.
+Make a POST request to `/api/v2/engagements/card/onboarding` with the applicant's information. The service immediately returns an onboarding ID and begins processing.
+
+The unified API supports both individual and sole trader onboarding through the `onboardingType` discriminator field:
+- Set `onboardingType` to `"INDIVIDUAL"` for individual customers
+- Set `onboardingType` to `"SOLE_TRADER"` for sole trader customers (requires additional company information)
 
 ### Step 3: Handle Processing
 
 The Card Service performs automated checks:
 - KYC verification against PEP and sanctions lists
-- Credit scoring through bureau integrations
+- Credit scoring through bureau integrations (Schufa, Creditsafe for sole traders)
 - Internal risk assessment
+- For sole traders: Additional KYB verification and signatory authorization checks
 
 This typically completes within 3-10 seconds.
 
@@ -151,10 +156,12 @@ The onboarding process moves through defined states, each representing a specifi
     **Reasons**:
     - KYC_DENIAL
     - CREDIT_SCORING_DENIAL
+    - UNAUTHORIZED_SIGNATORY (sole traders only)
     
     **Customer Action**:
     - KYC issues: Our AML team will handle these manually and after review, the user can start new onboarding
     - Credit issues: Recommend that you let the customer reapply after 3 months with new onboarding
+    - Signatory issues: Customer must provide proof of authorization to sign for the business
     
     <Warning>
     For both KYC and credit scoring denials, the current onboarding remains permanently in REJECTED status. Customers must initiate a completely new onboarding process with a new onboarding ID:

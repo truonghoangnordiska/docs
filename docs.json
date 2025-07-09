@@ -23,7 +23,7 @@
               {
                 "group": "Onboarding",
                 "pages": [
-                  "card/onboarding-individuals",
+                  "card/onboarding",
                   "card/integration-flow",
                   "card/webhooks"
                 ]
