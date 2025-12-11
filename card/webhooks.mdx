@@ -113,7 +113,10 @@ Triggered when a credit card application is declined during assessment.
 | Reason | Description | Customer Action |
 |--------|-------------|-----------------|
 | `KYC_DENIAL` | Failed identity verification or sanctions screening | Contact support, provide additional documentation |
+| `KYB_DENIAL` | Failed business verification | Contact support for business verification issues |
 | `CREDIT_SCORING_DENIAL` | Insufficient creditworthiness based on bureau data | Can reapply after 3 months |
+| `UNAUTHORIZED_SIGNATORY` | Individual not authorized to sign for business | Provide proof of signatory authorization |
+| `INVALID_DOCUMENTS` | Submitted documents invalid or insufficient | Re-upload valid documents |
 
 ### ONBOARDING_FAILED
 

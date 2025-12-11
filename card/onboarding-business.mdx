@@ -1,0 +1,172 @@
+---
+title: "Business"
+description: "Understanding the credit card application and onboarding journey for business customers"
+---
+
+Credit card onboarding for business customers is the process through which your business customers apply for and receive their credit cards. This involves comprehensive checks and assessments to ensure responsible lending while maintaining a smooth user experience, including additional business verification steps.
+
+## What is Business Card Onboarding?
+
+Business card onboarding encompasses the entire journey from application to card activation:
+
+1. **Application Submission** - Customer provides personal, financial, and company information
+2. **Verification & Assessment** - Automated checks, credit evaluation, and business verification
+3. **Document Upload** - Additional documentation if required (e.g., tax registration)
+4. **Agreement Signing** - Digital signing of terms and conditions
+5. **Card Issuance** - Physical or virtual card creation
+6. **Activation** - Card ready for use
+
+## The Onboarding Journey
+
+```mermaid
+graph LR
+    A["Business Application"] --> B["Processing"]
+    B --> C["Credit & Business Assessment"]
+    C --> D{Decision}
+    D -->|Rejected| E["Rejection Notice"]
+    D -->|Needs Docs| F["Document Upload"]
+    F --> G["Document Review"]
+    G --> H{Review Result}
+    H -->|Approved| I["Identity Verification"]
+    D -->|Approved| I
+    I --> J["Document Signing"]
+    J --> K["Card Creation"]
+    K --> L["Activation"]
+```
+
+## Key Processes
+
+### Application Processing
+
+Initial validation and comprehensive checks including:
+
+- **Application Validation**: Verifying completeness and format of submitted data
+- **Internal Checks**: Invoice payment history, block lists, and existing customer records
+- **Know Your Customer (KYC)**: PEP screening, sanctions lists
+- **Know Your Business (KYB)**: Adverse media screening
+- **Credit Assessment**: Schufa integration, Creditsafe business credit checks, income verification, risk scoring
+- **Authorization Verification**: Ensuring authorized signatory status
+
+<CardGroup cols={2}>
+  <Card title="Business Fraud Detection" icon="shield-halved">
+    Enhanced analysis including business patterns and corporate identity verification
+  </Card>
+  <Card title="AML & KYB Compliance" icon="flag">
+    Anti-Money Laundering checks plus Know Your Business verification including adverse media screening
+  </Card>
+  <Card title="Regulatory Compliance" icon="scale-balanced">
+    Adherence to PSD2, GDPR, and local financial regulations plus business-specific requirements
+  </Card>
+  <Card title="Business Credit Policy" icon="clipboard-check">
+    Dual assessment of personal and business creditworthiness for responsible lending
+  </Card>
+</CardGroup>
+
+<Warning>
+Credit assessments are binding for 30 days. Business customers who are rejected due to credit scoring can reapply after 3 months. Business verification failures may require additional documentation.
+</Warning>
+
+### Document Upload
+
+When additional documentation is required (such as tax registration for certain business types), the application enters the `AWAITING_DOCUMENTS` state.
+
+**Upload Endpoint:**
+```http
+POST /api/engagements/card/onboarding/{onboarding-id}/documents
+```
+
+**Requirements:**
+- **Content types**: `application/pdf`, `image/*`
+- **Maximum file size**: 10 MB
+- **Document types**: `TAX_REGISTRATION` (extensible)
+
+After documents are uploaded, the status transitions to `AWAITING_DOCUMENT_REVIEW` while documents are verified by our team.
+
+### Identity Verification
+
+Once credit and business assessment is approved (or documents are reviewed and accepted), customers complete identity verification:
+
+- **Document Verification**: Validation of government-issued IDs
+- **Liveness Check**: Ensuring the person is physically present
+- **Data Matching**: Verifying information matches official records
+- **Signatory Authorization**: Confirming the individual is authorized to sign on behalf of the business
+
+<Info>
+Identity verification for business customers may take slightly longer due to additional business authorization checks, but typically completes within minutes using automated systems.
+</Info>
+
+### Document Signing
+
+Once identity verification is completed, business customers must digitally sign:
+
+- **Credit Agreement**: Terms and conditions for the credit facility
+- **Privacy Policy**: Data processing agreements
+
+The signing process uses **Qualified Electronic Signatures (QES)** which provide:
+- **Legal Equivalence**: Same legal status as handwritten signatures under eIDAS regulation
+- **Non-repudiation**: Cryptographically ensures the signer cannot deny having signed
+- **Multi-lingual**: Available in German and English
+- **Mobile-Optimized**: Works seamlessly on all devices
+- **Regulatory Compliance**: Meets EU standards for financial services
+
+## Business Registration Types
+
+The API supports various business registration types, each with specific information requirements:
+
+### Freelancer
+For self-employed professionals:
+- Tax number
+- Registration date
+- Main business activity
+
+### Registered Merchant (Eingetragener Kaufmann)
+For sole proprietors registered in the commercial register:
+- Commercial register number
+- Registration court
+
+### Small Business (Kleingewerbe)
+For small businesses not required to register in commercial register:
+- Trade registration details
+
+### General Partnership (OHG)
+For general partnerships:
+- Commercial register number
+- Registration court
+
+### Limited Partnership (KG)
+For limited partnerships:
+- Commercial register number
+- Registration court
+
+### Partnership (GbR)
+For civil law partnerships:
+- Partnership agreement details
+
+## Onboarding States
+
+The business onboarding process progresses through several states:
+
+- **PROCESSING**: Initial validation, personal and business checks, KYC/KYB verification, credit assessment
+- **AWAITING_DOCUMENTS**: Additional documents required from applicant
+- **AWAITING_DOCUMENT_REVIEW**: Documents submitted, awaiting review
+- **AWAITING_SIGNING**: Application approved, waiting for digital signature with signing URL provided
+- **AWAITING_CARD_CREATION**: Documents signed, waiting for card creation with credit assessment details
+- **COMPLETED**: Onboarding successfully finished with credit engagement established
+- **REJECTED**: Application rejected with specific reasons:
+  - `KYC_DENIAL`: Failed KYC verification (PEP, sanctions)
+  - `KYB_DENIAL`: Failed business verification
+  - `CREDIT_SCORING_DENIAL`: Failed personal or business credit scoring
+  - `UNAUTHORIZED_SIGNATORY`: Individual is not authorized to sign for the business
+  - `INVALID_DOCUMENTS`: Submitted documents invalid or insufficient
+- **FAILED**: Unexpected error occurred:
+  - `INTERNAL_ERROR`: System error requiring investigation
+  - `ADDRESS_MISMATCH`: Address doesn't match official records
+  - `NAME_MISMATCH`: Name doesn't match official records
+  - `ID_VERIFICATION_FAILED`: Identity verification failed
+  - `TIMEOUT`: Process timeout
+
+<Info>
+Business applications include enhanced verification steps for business legitimacy and signatory authorization, which may extend processing time but ensure compliance with business lending regulations.
+</Info>
+
+Ready to implement? Continue to our [Integration Flow](/card/integration-flow) guide for technical implementation details.

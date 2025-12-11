@@ -1,6 +1,6 @@
 ---
 title: "Card Onboarding"
-description: "Complete guide to credit card application and onboarding for both individuals and sole traders"
+description: "Complete guide to credit card application and onboarding for consumers and businesses"
 ---
 
 Credit card onboarding is the process through which your customers apply for and receive their credit cards. This involves comprehensive checks and assessments to ensure responsible lending while maintaining a smooth user experience.
@@ -9,35 +9,36 @@ Credit card onboarding is the process through which your customers apply for and
 
 Card onboarding encompasses the entire journey from application to card activation:
 
-1. **Application Submission** - Customer provides personal and financial information (plus company details for sole traders)
+1. **Application Submission** - Customer provides personal and financial information (plus company details for businesses)
 2. **Verification & Assessment** - Automated checks, credit evaluation, and business verification
-3. **Agreement Signing** - Digital signing of terms and conditions
-4. **Card Issuance** - Physical or virtual card creation
-5. **Activation** - Card ready for use
+3. **Document Upload** - Additional documentation if required
+4. **Agreement Signing** - Digital signing of terms and conditions
+5. **Card Issuance** - Physical or virtual card creation
+6. **Activation** - Card ready for use
 
 ## API Overview
 
-Our unified API supports both individual and sole trader onboarding through a single endpoint with different `onboardingType` values:
+Our unified API supports both consumer and business onboarding through a single endpoint with different `onboardingType` values:
 
-### V2 API Endpoint
+### V4 API Endpoint
 ```http
-POST /api/v2/engagements/card/onboarding
+POST /api/v4/engagements/card/onboarding
 ```
 
 ### Request Structure
 The API uses a discriminator field `onboardingType` to handle different customer types:
 
 <Tabs>
-  <Tab title="Individual">
-    For individual customers, set `onboardingType` to `"INDIVIDUAL"` and provide:
+  <Tab title="Consumer">
+    For consumer customers, set `onboardingType` to `"CONSUMER"` and provide:
     - Complete applicant information (personal details, address, employment)
     - Card type selection
     - Redirect URLs for success/failure handling
   </Tab>
-  <Tab title="Sole Trader">
-    For sole trader customers, set `onboardingType` to `"SOLE_TRADER"` and provide:
-    - Complete applicant information (same as individual)
-    - **Additional company information** (name, registration number, VAT number, city)
+  <Tab title="Business">
+    For business customers, set `onboardingType` to `"BUSINESS"` and provide:
+    - Complete applicant information (same as consumer)
+    - **Additional company information** (name, registration details based on business type)
     - Card type selection
     - Redirect URLs for success/failure handling
   </Tab>
@@ -45,7 +46,7 @@ The API uses a discriminator field `onboardingType` to handle different customer
 
 ## The Onboarding Journey
 
-Both individual and sole trader applications follow the same state flow:
+Both consumer and business applications follow the same state flow:
 
 ```mermaid
 graph LR
@@ -53,10 +54,14 @@ graph LR
     B --> C["Assessment"]
     C --> D{Decision}
     D -->|Rejected| E["Rejection Notice"]
-    D -->|Approved| F["Identity Verification"]
-    F --> G["Document Signing"]
-    G --> H["Card Creation"]
-    H --> I["Activation"]
+    D -->|Needs Docs| F["Document Upload"]
+    F --> G["Document Review"]
+    G --> H{Review Result}
+    H -->|Approved| I["Identity Verification"]
+    D -->|Approved| I
+    I --> J["Document Signing"]
+    J --> K["Card Creation"]
+    K --> L["Activation"]
 ```
 
 ## Key Processes
@@ -66,7 +71,7 @@ graph LR
 The system performs comprehensive validation and assessment:
 
 <Tabs>
-  <Tab title="Individual">
+  <Tab title="Consumer">
     **Standard Checks:**
     - Application validation (completeness, format)
     - Internal checks (invoice history, block lists)
@@ -74,7 +79,7 @@ The system performs comprehensive validation and assessment:
     - Credit assessment (Schufa integration)
     - Income verification and risk scoring
   </Tab>
-  <Tab title="Sole Trader">
+  <Tab title="Business">
     **Enhanced Checks:**
     - Application validation (completeness, format)
     - Internal checks (invoice history, block lists)
@@ -89,16 +94,16 @@ The system performs comprehensive validation and assessment:
 
 <CardGroup cols={2}>
   <Card title="Fraud Detection" icon="shield-halved">
-    Real-time analysis of application patterns and behavioral signals to prevent identity theft. Enhanced for sole traders with business pattern analysis.
+    Real-time analysis of application patterns and behavioral signals to prevent identity theft. Enhanced for businesses with business pattern analysis.
   </Card>
   <Card title="AML/KYB Compliance" icon="flag">
-    Anti-Money Laundering checks for all applicants. Additional Know Your Business verification including adverse media screening for sole traders.
+    Anti-Money Laundering checks for all applicants. Additional Know Your Business verification including adverse media screening for businesses.
   </Card>
   <Card title="Regulatory Compliance" icon="scale-balanced">
-    Adherence to PSD2, GDPR, and local financial regulations. Additional business-specific requirements for sole traders.
+    Adherence to PSD2, GDPR, and local financial regulations. Additional business-specific requirements for business applicants.
   </Card>
   <Card title="Credit Policy" icon="clipboard-check">
-    Consistent application of lending criteria. Dual assessment of personal and business creditworthiness for sole traders.
+    Consistent application of lending criteria. Dual assessment of personal and business creditworthiness for business applicants.
   </Card>
 </CardGroup>
 
@@ -106,17 +111,33 @@ The system performs comprehensive validation and assessment:
   Credit assessments are binding for 30 days. Customers who are rejected due to credit scoring can reapply after 3 months.
 </Warning>
 
+### Document Upload
+
+When additional documentation is required (such as tax registration for certain business types), the application enters the `AWAITING_DOCUMENTS` state.
+
+**Upload Endpoint:**
+```http
+POST /api/engagements/card/onboarding/{onboarding-id}/documents
+```
+
+**Requirements:**
+- **Content types**: `application/pdf`, `image/*`
+- **Maximum file size**: 10 MB
+- **Document types**: `TAX_REGISTRATION` (extensible)
+
+After documents are uploaded, the status transitions to `AWAITING_DOCUMENT_REVIEW` while documents are verified by our team.
+
 ### Identity Verification
 
-Once assessment is approved, customers complete identity verification:
+Once assessment is approved (or documents are reviewed and accepted), customers complete identity verification:
 
 - **Document Verification**: Validation of government-issued IDs
 - **Liveness Check**: Ensuring the person is physically present
 - **Data Matching**: Verifying information matches official records
-- **Signatory Authorization** (sole traders): Confirming authorization to sign on behalf of the business
+- **Signatory Authorization** (businesses): Confirming authorization to sign on behalf of the business
 
 <Info>
-  Identity verification typically completes within minutes. Sole traders may take slightly longer due to additional business authorization checks.
+  Identity verification typically completes within minutes. Business applicants may take slightly longer due to additional business authorization checks.
 </Info>
 
 ### Document Signing
@@ -138,13 +159,17 @@ The signing process uses **Qualified Electronic Signatures (QES)** which provide
 The onboarding process progresses through defined states:
 
 - **PROCESSING**: Initial validation, KYC/KYB verification, credit assessment
+- **AWAITING_DOCUMENTS**: Additional documents required from applicant
+- **AWAITING_DOCUMENT_REVIEW**: Documents submitted, awaiting review
 - **AWAITING_SIGNING**: Application approved, waiting for digital signature
 - **AWAITING_CARD_CREATION**: Documents signed, waiting for card creation
 - **COMPLETED**: Onboarding successfully finished with credit engagement established
 - **REJECTED**: Application rejected with specific reasons:
   - `KYC_DENIAL`: Failed KYC verification (PEP, sanctions)
+  - `KYB_DENIAL`: Failed business verification
   - `CREDIT_SCORING_DENIAL`: Failed personal or business credit scoring
-  - `UNAUTHORIZED_SIGNATORY`: Individual not authorized to sign for business (sole traders only)
+  - `UNAUTHORIZED_SIGNATORY`: Individual not authorized to sign for business (businesses only)
+  - `INVALID_DOCUMENTS`: Submitted documents invalid or insufficient
 - **FAILED**: Unexpected error occurred:
   - `INTERNAL_ERROR`: System error requiring investigation
   - `ADDRESS_MISMATCH`: Address doesn't match official records
@@ -156,8 +181,8 @@ The onboarding process progresses through defined states:
 
 All responses include the `onboardingType` discriminator to identify the customer type. The response structure varies based on the onboarding type:
 
-- **Individual responses**: Include applicant information only
-- **Sole trader responses**: Include both applicant and company information
+- **Consumer responses**: Include applicant information only
+- **Business responses**: Include both applicant and company information
 
 Additional information fields are provided based on the current onboarding state (signing URL, credit assessment details, rejection reasons, etc.).
 
